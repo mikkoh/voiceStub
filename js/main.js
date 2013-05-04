@@ -30,6 +30,11 @@ function( $, Parser ) {
 			parser.parse( 'add a class called zebra' );
 			console.log( '------------' );
 
+			console.log( 'subtract a class called zebra' );
+			parser.parse( 'subtract a class called zebra' );
+			console.log( '------------' );
+
+
 			console.log( '********* END OF SIMPLE CLASS CREATION **********' );
 
 
@@ -65,6 +70,10 @@ function( $, Parser ) {
 
 			console.log( 'add a function named meow to cat' );
 			parser.parse( 'add a function named meow to cat' );
+			console.log( '------------' );
+
+			console.log( 'delete a function named meow from cat' );
+			parser.parse( 'delete a function named meow from cat' );
 			console.log( '------------' );
 
 			console.log( 'add a parameter called meow to a function called foo' );

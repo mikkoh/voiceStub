@@ -11,7 +11,9 @@ define( function() {
 				value: 'class',
 				verbs: [
 					{ value: 'add', func: 'createClass' },
-					{ value: 'create', func: 'createClass' }
+					{ value: 'create', func: 'createClass' },
+					{ value: 'subtract', func: 'deleteClass' },
+					{ value: 'delete', func: 'deleteClass' }
 				],
 				defaultFunc: 'createClass'
 			},
@@ -20,7 +22,9 @@ define( function() {
 				value: 'function',
 				verbs: [
 					{ value: 'add', func: 'createFunction' },
-					{ value: 'create', func: 'createFunction' }
+					{ value: 'create', func: 'createFunction' },
+					{ value: 'subtract', func: 'deleteFunction' },
+					{ value: 'delete', func: 'deleteFunction' }
 				],
 				defaultFunc: 'createFunction'
 			},
@@ -29,7 +33,9 @@ define( function() {
 				value: 'parameter',
 				verbs: [
 					{ value: 'add', func: 'addParameter' },
-					{ value: 'create', func: 'addParameter' }
+					{ value: 'create', func: 'addParameter' },
+					{ value: 'subtract', func: 'deleteParameter' },
+					{ value: 'delete', func: 'deleteParameter' }
 				],
 				defaultFunc: 'addParameter'
 			}
@@ -44,7 +50,8 @@ define( function() {
 
 		prepositions: [
 			{ value: 'to' },
-			{ value: 'on' }
+			{ value: 'on' },
+			{ value: 'from' }
 		],
 
 		addNoun: function( noun, extendNoun ) {
@@ -141,7 +148,6 @@ define( function() {
 			if( this.isPreposition( scrubbedArr[ i ] ) != -1 ) {
 				//now that we found a preposition we want to find a noun what to add to
 				//note the nouns dictionary should grow as this program is used
-
 				if( this.isNoun( scrubbedArr[ i + 1 ] ) != -1 &&  
 					( scrubbedArr[ i + 2 ] == 'called' || scrubbedArr[ i + 2 ] == 'named' )) {
 
@@ -152,21 +158,19 @@ define( function() {
 
 					combinedWord = combinedWord.toLowerCase();
 
-					if( this.isAddedNoun( combinedWord ) ) {
+					if( this.isAddedNoun( combinedWord ) != -1 ) {
 						//now we need to add up all remaining words to check if its an added noun
 						rValItem.actOn = combinedWord;
 						scrubbedArr.splice( i, 3 + scrubbedArr.length - ( i + 3 ) );
 					}
 				} else {
-					i + 1
-
 					var combinedWord = '';
 
 					for( var j = i + 1; j < scrubbedArr.length; j++ ) {
 						combinedWord += scrubbedArr[ j ];
 					}
 
-					if( this.isAddedNoun( combinedWord ) ) {
+					if( this.isAddedNoun( combinedWord ) != -1 ) {
 						//now we need to add up all remaining words to check if its an added noun
 						rValItem.actOn = combinedWord;
 						scrubbedArr.splice( i, scrubbedArr.length - ( i + 1 ) );
