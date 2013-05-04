@@ -129,18 +129,29 @@ define( function() {
 		var rValItem = {};
 		var nounIndices = [];
 
+		//actOn is going to be what this command should act on
+		rValItem.actOn = null;
+
 		//find what we want to apply this function to look for prepositions (on, to)
 		//if we find one we we want to delete the preposition and the noun so the rest can
 		//take precedence
 
-		//ex: add a function called meow to a class called cat
-		//ex: add a function called meow to cat
+		
 		for( var i = 0; i < scrubbedArr.length; i++ ) {
 			if( this.isPreposition( scrubbedArr[ i ] ) != -1 ) {
 				//now that we found a preposition we want to find a noun what to add to
 				//note the nouns dictionary should grow as this program is used
-				if( this.isNoun( scrubbedArr[ i ] ) ) {
 
+				//ex: add a function called meow to cat
+				if(  this.isAddedNoun( scrubbedArr[ i + 1 ] ) != -1 ) {
+					rValItem.actOn = scrubbedArr[ i + 1 ];
+					scrubbedArr.splice( i, 2 );
+				//ex: add a function called meow to a class called cat
+				} else if( this.isNoun( scrubbedArr[ i + 1 ] ) != -1 &&  
+						   ( scrubbedArr[ i + 2 ] == 'called' || scrubbedArr[ i + 2 ] == 'named' ) &&
+						   this.isAddedNoun( scrubbedArr[ i + 3 ] ) != -1 ) {
+					rValItem.actOn = scrubbedArr[ i + 3 ];
+					scrubbedArr.splice( i, 4 );
 				}
 			}
 		}
@@ -241,6 +252,19 @@ define( function() {
 
 		for( var j = 0; j < Dictionary.nouns.length; j++ ) {
 			if( word == Dictionary.nouns[ j ].value ) {
+				foundIdx = j;
+				break;
+			}
+		}
+
+		return foundIdx;
+	};
+
+	Parser.prototype.isAddedNoun = function( word ) {
+		var foundIdx = -1;
+
+		for( var j = 0; j < Dictionary.addedNouns.length; j++ ) {
+			if( word == Dictionary.addedNouns[ j ].value ) {
 				foundIdx = j;
 				break;
 			}
