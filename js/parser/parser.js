@@ -55,7 +55,7 @@ define( function() {
 			}
 
 			nNounObj.extendedNoun = extendNoun.value;
-			nNounObj.value = noun;
+			nNounObj.value = noun.toLowerCase();
 
 			Dictionary.addedNouns.push( nNounObj );
 		}
@@ -142,16 +142,35 @@ define( function() {
 				//now that we found a preposition we want to find a noun what to add to
 				//note the nouns dictionary should grow as this program is used
 
-				//ex: add a function called meow to cat
-				if(  this.isAddedNoun( scrubbedArr[ i + 1 ] ) != -1 ) {
-					rValItem.actOn = scrubbedArr[ i + 1 ];
-					scrubbedArr.splice( i, 2 );
-				//ex: add a function called meow to a class called cat
-				} else if( this.isNoun( scrubbedArr[ i + 1 ] ) != -1 &&  
-						   ( scrubbedArr[ i + 2 ] == 'called' || scrubbedArr[ i + 2 ] == 'named' ) &&
-						   this.isAddedNoun( scrubbedArr[ i + 3 ] ) != -1 ) {
-					rValItem.actOn = scrubbedArr[ i + 3 ];
-					scrubbedArr.splice( i, 4 );
+				if( this.isNoun( scrubbedArr[ i + 1 ] ) != -1 &&  
+					( scrubbedArr[ i + 2 ] == 'called' || scrubbedArr[ i + 2 ] == 'named' )) {
+
+					var combinedWord = '';
+					for( var j = i + 3; j < scrubbedArr.length; j++ ) {
+						combinedWord += scrubbedArr[ j ];
+					}
+
+					combinedWord = combinedWord.toLowerCase();
+
+					if( this.isAddedNoun( combinedWord ) ) {
+						//now we need to add up all remaining words to check if its an added noun
+						rValItem.actOn = combinedWord;
+						scrubbedArr.splice( i, 3 + scrubbedArr.length - ( i + 3 ) );
+					}
+				} else {
+					i + 1
+
+					var combinedWord = '';
+
+					for( var j = i + 1; j < scrubbedArr.length; j++ ) {
+						combinedWord += scrubbedArr[ j ];
+					}
+
+					if( this.isAddedNoun( combinedWord ) ) {
+						//now we need to add up all remaining words to check if its an added noun
+						rValItem.actOn = combinedWord;
+						scrubbedArr.splice( i, scrubbedArr.length - ( i + 1 ) );
+					}
 				}
 			}
 		}
