@@ -67,12 +67,8 @@ function( $, Parser ) {
 			parser.parse( 'add a function named meow to cat' );
 			console.log( '------------' );
 
-			console.log( 'add a parameter to meow to cat called thing' );
-			parser.parse( 'add a parameter to meow to cat called thing' );
-			console.log( '------------' );
-
-			console.log( 'add a parameter to thing' );
-			parser.parse( 'add a parameter to thing' );
+			console.log( 'add a parameter called meow to a function called foo' );
+			parser.parse( 'add a parameter called meow to a function called foo' );
 			console.log( '------------' );
 
 			console.log( 'add a function called meow to a class called cat with a parameter called three' );
