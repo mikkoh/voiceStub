@@ -6,14 +6,29 @@ requirejs.config({
 	}
 });
 
-requirejs(['lib/jquery', 'parser/parser'], 
-function( $, Parser ) {
+
+
+requirejs(['lib/jquery', 'parser/parser', 'ui/uiFactory'], 
+function( $, Parser, UIFactory ) {
 	$( function(){
 		if( 'webkitSpeechRecognition' in window) {
 			var recog = new webkitSpeechRecognition();
 			var parser = new Parser();
+			var uiFactory = new UIFactory( $('body') );
+
+			parser.parse( 'create a class called monkey' );
+			parser.parse( 'add a function to monkey called eat' );
 
 
+			/*
+			uiFactory.addCommands( parser.parse( 'add a class called cat with a function called meow with a parameter called sound' ) );
+			uiFactory.addCommands( parser.parse( 'add a function called lick to a class named cat' ) );
+			uiFactory.addCommands( parser.parse( 'add a parameter called amount to lick' ) );
+			uiFactory.addCommands( parser.parse( 'add a parameter called dampness to lick' ) );
+			uiFactory.addCommands( parser.parse( 'add a class called dog with a function called woof with a parameter called sound' ) );
+			*/
+
+			/*
 			console.log( 'add a class called cat' );
 			parser.parse( 'add a class called cat' );
 			console.log( '------------' );
@@ -93,6 +108,7 @@ function( $, Parser ) {
 			console.log( 'add a function named meow to cat with parameters one two and three' );
 			parser.parse( 'add a function named meow to cat with parameters one two and three' );
 			console.log( '------------' );
+			*/
 
 
 			
@@ -108,7 +124,7 @@ function( $, Parser ) {
 				for( var i = 0, len = results.length; i < len ; i++ ) {
 					if( results[ i ].isFinal ) {
 						console.log( results[ i ][ 0 ].transcript );
-						parser.parse( results[ i ][ 0 ].transcript );
+						uiFactory.addCommands( parser.parse( results[ i ][ 0 ].transcript ) );
 					}
 				}
 			}

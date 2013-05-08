@@ -110,26 +110,12 @@ define( function() {
 
 		//now parse out each bit
 		for( var i = 0; i < splitScrubbed.length; i++ ) {
-			console.log( this.parseScrubbed( splitScrubbed[ i ] ) );
+			rVal.push( this.parseScrubbed( splitScrubbed[ i ] ) );
 		}
 
 
 		
-
-		//create a class called cat
-		//create a class named cat
-		//add a class named cat
-		//add a class called cat
-
-		//create a class called cat with functions one two and three
-		//create a class called cat with a function called thing	
-
-		//create a class named cat and add a function named meow
-
-		//add a function named meow to cat
-		//add a function named meow to cat with parameters one two and three
-
-		//create class called cat with functions one two and three	
+		return rVal;	
 	};
 
 	Parser.prototype.parseScrubbed = function( scrubbedArr ) {
@@ -161,7 +147,9 @@ define( function() {
 					if( this.isAddedNoun( combinedWord ) != -1 ) {
 						//now we need to add up all remaining words to check if its an added noun
 						rValItem.actOn = combinedWord;
-						scrubbedArr.splice( i, 3 + scrubbedArr.length - ( i + 3 ) );
+						scrubbedArr.splice( i, scrubbedArr.length - i );
+
+						break;
 					}
 				} else {
 					var combinedWord = '';
@@ -173,7 +161,9 @@ define( function() {
 					if( this.isAddedNoun( combinedWord ) != -1 ) {
 						//now we need to add up all remaining words to check if its an added noun
 						rValItem.actOn = combinedWord;
-						scrubbedArr.splice( i, scrubbedArr.length - ( i + 1 ) );
+						scrubbedArr.splice( i, scrubbedArr.length - i );
+
+						break;
 					}
 				}
 			}
