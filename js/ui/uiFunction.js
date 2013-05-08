@@ -14,12 +14,14 @@ define( [ 'lib/jquery', 'ui/uiBase' ], function( $, UIBase ) {
 								'<div class="nameContainer"> function ' + this.name + '(</div>' +
 								'<div id="parameterContainer"></div>' +
 								'<div class="nameContainer"> ) </div>' +
-							'</div>' ).appendTo( this.parentContainer );
+							'</div>' );
 
 		this.parameterContainer = this.container.find( '#parameterContainer' );
+
+		this.add();
 	};
 
-	UIFunction.prototype.add = function( ui ) {
+	UIFunction.prototype.addItem = function( ui ) {
 		ui.changeContainer( this.parameterContainer );
 	};
 

@@ -13,7 +13,11 @@ define( function() {
 		this.container.appendTo( parentContainer );
 	};
 
-	UIBase.prototype.destroy = function() {
+	UIBase.prototype.add = function() {
+		this.container.appendTo( this.parentContainer );	
+	};
+
+	UIBase.prototype.remove = function() {
 		this.container.remove();
 	};
 

@@ -13,7 +13,8 @@ define( function() {
 					{ value: 'add', func: 'createClass' },
 					{ value: 'create', func: 'createClass' },
 					{ value: 'subtract', func: 'deleteClass' },
-					{ value: 'delete', func: 'deleteClass' }
+					{ value: 'delete', func: 'deleteClass' },
+					{ value: 'remove', func: 'deleteClass' }
 				],
 				defaultFunc: 'createClass'
 			},
@@ -24,7 +25,8 @@ define( function() {
 					{ value: 'add', func: 'createFunction' },
 					{ value: 'create', func: 'createFunction' },
 					{ value: 'subtract', func: 'deleteFunction' },
-					{ value: 'delete', func: 'deleteFunction' }
+					{ value: 'delete', func: 'deleteFunction' },
+					{ value: 'remove', func: 'deleteFunction' }
 				],
 				defaultFunc: 'createFunction'
 			},
@@ -35,7 +37,8 @@ define( function() {
 					{ value: 'add', func: 'addParameter' },
 					{ value: 'create', func: 'addParameter' },
 					{ value: 'subtract', func: 'deleteParameter' },
-					{ value: 'delete', func: 'deleteParameter' }
+					{ value: 'delete', func: 'deleteParameter' },
+					{ value: 'remove', func: 'deleteParameter' }
 				],
 				defaultFunc: 'addParameter'
 			}
