@@ -3,8 +3,6 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 	var FactoryJob = function( factory, command ) {
 		this.factory = factory;
 		this.command = command;
-
-		this.redo();
 	};
 
 	FactoryJob.prototype.factory = null;
@@ -15,9 +13,15 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 		var curItem = null;
 		var classToActOn = null;
 		var functionToActOn = null;
+		var numCommandsRun = 0;
 
 		for( var i = 0; i < command.length; i++ ) {
-			console.log( command[ i ] );
+			//We want to stop the execution of commands if an error was returned
+			if( command[ i ].error ) {
+				break;
+			}
+
+			numCommandsRun++;
 
 			switch( command[ i ].func ) {
 				case 'createClass':
@@ -76,6 +80,8 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 				break;
 			}
 		}
+
+		return numCommandsRun;
 	};
 
 	FactoryJob.prototype.undo = function() {
@@ -108,11 +114,17 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 	UIFactory.prototype.addCommands = function( command ) {
 		if( command ) {
 			var job = new FactoryJob( this, command );
+			var numCommandsRun = job.redo();
 
-			this.jobs.length = this.jobIdx;
-			this.jobs[ this.jobIdx ] = job;
+			//if something was run then we'll add it
+			//otherwise it parsing errored immediately
+			//and we wont add anything at all
+			if( numCommandsRun > 0 ) {
+				this.jobs.length = this.jobIdx;
+				this.jobs[ this.jobIdx ] = job;
 
-			this.jobIdx++;
+				this.jobIdx++;
+			}
 		}
 	};
 
