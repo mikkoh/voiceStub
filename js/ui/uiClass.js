@@ -17,8 +17,6 @@ define( [ 'lib/jquery', 'ui/uiBase' ], function( $, UIBase ) {
 							'</div>' );
 
 		this.functionContainer = this.container.find( '#functionContainer' );
-
-		this.add();
 	};
 
 	UIClass.prototype.addItem = function( ui ) {

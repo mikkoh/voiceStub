@@ -17,8 +17,6 @@ define( [ 'lib/jquery', 'ui/uiBase' ], function( $, UIBase ) {
 							'</div>' );
 
 		this.parameterContainer = this.container.find( '#parameterContainer' );
-
-		this.add();
 	};
 
 	UIFunction.prototype.addItem = function( ui ) {

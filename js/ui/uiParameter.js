@@ -10,8 +10,6 @@ define( [ 'lib/jquery', 'ui/uiBase' ], function( $, UIBase ) {
 		this.name = initData[ 0 ];
 
 		this.container = $( '<div class="parameter">' + this.name + '</div>' ).appendTo( this.parentContainer );
-
-		this.add();
 	};
 
 	return UIParameter;

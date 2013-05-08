@@ -15,8 +15,6 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 		var functionToActOn = null;
 		var numCommandsRun = 0;
 
-		console.log( command );
-
 		for( var i = 0; i < command.length; i++ ) {
 			//We want to stop the execution of commands if an error was returned
 			if( command[ i ].error ) {
@@ -35,6 +33,8 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 
 						this.factory.addClass( curItem );
 					}
+
+					curItem.add();
 
 					classToActOn = curItem;
 				break;
@@ -57,6 +57,8 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 						}
 					}
 
+					curItem.add();
+
 					functionToActOn = curItem;
 				break;
 
@@ -75,6 +77,8 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 
 						functionToActOn.addItem( curItem );
 					}
+
+					curItem.add();
 				break;
 
 				case 'deleteClass':
@@ -119,7 +123,68 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 	};
 
 	FactoryJob.prototype.undo = function() {
+		var command = this.command;
+		var curItem = null;
+		var classToActOn = null;
+		var functionToActOn = null;
+		var numCommandsRun = 0;
 
+		for( var i = 0; i < command.length; i++ ) {
+			//We want to stop the execution of commands if an error was returned
+			if( command[ i ].error ) {
+				break;
+			}
+
+			numCommandsRun++;
+
+			switch( command[ i ].func ) {
+				case 'createClass':
+					curItem = this.factory.getClass( command[ i ].parameters[ 0 ] );
+					curItem.remove();
+				break;
+
+				case 'createFunction':
+					if( command[ i ].actOn ) {
+						classToActOn = this.factory.getClass( command[ i ].actOn );
+					}
+
+					curItem = this.factory.getFunction( command[ i ].parameters[ 0 ], classToActOn );
+					curItem.remove();
+				break;
+
+				case 'addParameter':
+					if( command[ i ].actOn ) {
+						functionToActOn = this.factory.getFunction( command[ i ].actOn );
+					}
+
+					curItem = this.factory.getParameter( command[ i ].parameters[ 0 ], functionToActOn );
+					curItem.remove();
+				break;
+
+				case 'deleteClass':
+					curItem = this.factory.getClass( command[ i ].parameters[ 0 ] );
+					curItem.add();
+				break;
+
+				case 'deleteFunction':
+					if( command[ i ].actOn ) {
+						classToActOn = this.factory.getClass( command[ i ].actOn );
+					}
+
+					curItem = this.factory.getFunction( command[ i ].parameters[ 0 ], classToActOn );
+					curItem.add();
+				break;
+
+				case 'deleteParameter':
+					if( command[ i ].actOn ) {
+						functionToActOn = this.factory.getFunction( command[ i ].actOn );
+					}
+
+					curItem = this.factory.getParameter( command[ i ].parameters[ 0 ], functionToActOn );
+					curItem.add();
+				break;
+			}
+		}
 	};
 
 
@@ -172,9 +237,9 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 
 	UIFactory.prototype.redo = function() {
 		if( this.jobIdx < this.jobs.length ) {
-			this.jobIdx++;
-
 			this.jobs[ this.jobIdx ].redo();
+
+			this.jobIdx++;
 		}
 	};
 
