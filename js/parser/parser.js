@@ -140,34 +140,34 @@ define( function() {
 					var combinedWord = '';
 					for( var j = i + 3; j < scrubbedArr.length; j++ ) {
 						combinedWord += scrubbedArr[ j ];
-					}
 
-					combinedWord = combinedWord.toLowerCase();
+						if( this.isAddedNoun( combinedWord ) != -1 ) {
+							//now we need to add up all remaining words to check if its an added noun
+							rValItem.actOn = combinedWord;
+							scrubbedArr.splice( i, ( j + 1 ) - i );
 
-					if( this.isAddedNoun( combinedWord ) != -1 ) {
-						//now we need to add up all remaining words to check if its an added noun
-						rValItem.actOn = combinedWord;
-						scrubbedArr.splice( i, scrubbedArr.length - i );
-
-						break;
+							break;
+						}
 					}
 				} else {
 					var combinedWord = '';
 
 					for( var j = i + 1; j < scrubbedArr.length; j++ ) {
 						combinedWord += scrubbedArr[ j ];
-					}
 
-					if( this.isAddedNoun( combinedWord ) != -1 ) {
-						//now we need to add up all remaining words to check if its an added noun
-						rValItem.actOn = combinedWord;
-						scrubbedArr.splice( i, scrubbedArr.length - i );
+						if( this.isAddedNoun( combinedWord ) != -1 ) {
+							//now we need to add up all remaining words to check if its an added noun
+							rValItem.actOn = combinedWord;
+							scrubbedArr.splice( i, ( j + 1 ) - i );
 
-						break;
+							break;
+						}
 					}
 				}
 			}
 		}
+
+		console.log( 'after preposition', rValItem.actOn, scrubbedArr );
 
 
 		//now find the indices of the nouns

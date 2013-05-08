@@ -16,10 +16,6 @@ function( $, Parser, UIFactory ) {
 			var parser = new Parser();
 			var uiFactory = new UIFactory( $('body') );
 
-			parser.parse( 'create a class called monkey' );
-			parser.parse( 'add a function to monkey called eat' );
-
-
 			/*
 			uiFactory.addCommands( parser.parse( 'add a class called cat with a function called meow with a parameter called sound' ) );
 			uiFactory.addCommands( parser.parse( 'add a function called lick to a class named cat' ) );
