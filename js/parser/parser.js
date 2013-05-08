@@ -128,8 +128,6 @@ define( function() {
 		//find what we want to apply this function to look for prepositions (on, to)
 		//if we find one we we want to delete the preposition and the noun so the rest can
 		//take precedence
-
-		
 		for( var i = 0; i < scrubbedArr.length; i++ ) {
 			if( this.isPreposition( scrubbedArr[ i ] ) != -1 ) {
 				//now that we found a preposition we want to find a noun what to add to
@@ -167,7 +165,6 @@ define( function() {
 			}
 		}
 
-		console.log( 'after preposition', rValItem.actOn, scrubbedArr );
 
 
 		//now find the indices of the nouns
