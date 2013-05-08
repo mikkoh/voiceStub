@@ -124,6 +124,7 @@ define( function() {
 	Parser.prototype.parseScrubbed = function( scrubbedArr ) {
 		var rValItem = {};
 		var nounIndices = [];
+		var keyNounIsAdded = false;
 
 		//actOn is going to be what this command should act on
 		rValItem.actOn = null;
@@ -173,16 +174,22 @@ define( function() {
 		//now find the indices of the nouns
 		for( var i = 0; i < scrubbedArr.length; i++ ) {
 			for( var j = 0; j < Dictionary.nouns.length; j++ ) {
-				var idx = this.isNoun( scrubbedArr[ i ] );
+				var idx = -1;
 
-				if( idx != -1 ) {
+				if( ( idx = this.isNoun( scrubbedArr[ i ] ) ) != -1 ) {
 					nounIndices.push( { wordIDX: i, dictionaryIDX: idx } );
-				}
+				} else if( ( idx = this.isAddedNoun( scrubbedArr[ i ]) ) != -1 ) {
+					nounIndices.push( { wordIDX: i, dictionaryIDX: idx } );
+
+					if( nounIndices.length == 1 ) {
+						keyNounIsAdded = true;
+					}
+				}	
 			}
 		}
 
 
-
+		console.log( 'pre', scrubbedArr, rValItem );
 
 		//figure out major action or key noun
 		if( nounIndices.length > 0 ) {
@@ -190,10 +197,18 @@ define( function() {
 			var nounIdx = nounIndices[ 0 ].dictionaryIDX;
 			var followingWordIDX = nounIndices[ 0 ].wordIDX + 1;
 			var followingWord = scrubbedArr[ followingWordIDX ];
+			var precedingWordOff = 1;
+
+			//because a noun such as cat can have 'the' in front we need to add one to the preceding word idx
+			//if the word in front of the noun is the eg. delete the class named cat
+			if( scrubbedArr[ nounIndices[ 0 ].wordIDX - precedingWordOff ] == 'the' ) {
+				precedingWordOff++;
+			}
+
 
 			//check if there is a preceding verb such as create, add, subtract, delete
 			if( nounIndices[ 0 ].wordIDX > 0 ) {
-				var precedingWordIDX = nounIndices[ 0 ].wordIDX - 1;
+				var precedingWordIDX = nounIndices[ 0 ].wordIDX - precedingWordOff;
 				var precedingWord = scrubbedArr[ precedingWordIDX ];
 
 				var verbIDX = this.isVerbForNoun( precedingWord, nounIndices[ 0 ].dictionaryIDX );
@@ -208,11 +223,11 @@ define( function() {
 				rValItem.func = Dictionary.nouns[ nounIdx ].defaultFunc;
 			}
 
-				
 
-
-			//we know what to do for this key nouyn
+			//we know what to do for this key noun
 			if( rValItem.func ) {
+				//check if the keynoun is followed by named in which case we'll need to find out the name of the new item we'll be
+				//acting on
 				if( followingWord == 'named' || followingWord == 'name' || followingWord == 'called' || followingWord == 'call' ) {
 					for( var i = followingWordIDX + 1; i < scrubbedArr.length; i++ ) {
 						if( rValItem.parameters == null ) {
@@ -230,7 +245,11 @@ define( function() {
 						//because we got something we want to add it to the nouns list
 						Dictionary.addNoun( rValItem.parameters[ 0 ], Dictionary.nouns[ nounIdx ] );
 					}
-				} else {
+				//check if the keynoun is an added noun
+				} else if( this.isAddedNoun( scrubbedArr[ nounIndices[ 0 ].wordIDX ] ) != -1 ) {
+						rValItem.parameters = [];
+						rValItem.parameters[ 0 ] = scrubbedArr[ nounIndices[ 0 ].wordIDX ];
+				} else {	
 					rValItem.error = 'no name for key noun for creation';
 					rValItem.parsed = false;
 				}
@@ -243,6 +262,8 @@ define( function() {
 			rValItem.error = 'not parsed since we have no key nouns';
 			rValItem.parsed = false;
 		}
+
+		console.log( rValItem );
 
 		return rValItem;
 	};

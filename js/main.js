@@ -17,8 +17,6 @@ function( $, Parser, UIFactory ) {
 			var uiFactory = new UIFactory( $('body') );
 
 			uiFactory.addCommands( parser.parse( 'add a class called cat with a function called meow with a parameter called sound' ) );
-			uiFactory.addCommands( parser.parse( 'delete a class called cat' ) );
-			uiFactory.undo();
 
 
 			/*
