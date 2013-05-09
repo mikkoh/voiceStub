@@ -46,6 +46,10 @@ define( function() {
 			}
 
 			this.nameContainer.html( nName );
+
+			if( nName != startVal && this.onNameChange ) {
+				this.onNameChange( nName, startVal );
+			}
 		}.bind( this );
 
 

@@ -17,5 +17,9 @@ define( [ 'lib/jquery', 'ui/uiBase' ], function( $, UIBase ) {
 		this.nameContainer.bind( 'click', this.onNameClick );
 	};
 
+	UIParameter.prototype.onNameChange = function( nName, oValue ) {
+		console.log( 'value changed', nName, oValue );
+	};
+
 	return UIParameter;
 });

@@ -29,5 +29,9 @@ define( [ 'lib/jquery', 'ui/uiBase' ], function( $, UIBase ) {
 		ui.changeContainer( this.functionContainer );
 	};
 
+	UIClass.prototype.onNameChange = function( nName, oValue ) {
+		console.log( 'value changed', nName, oValue );
+	};
+
 	return UIClass;
 });
