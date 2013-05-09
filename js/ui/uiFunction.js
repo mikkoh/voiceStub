@@ -12,8 +12,7 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/editableFunction' ], function( $, UIBas
 
 		this.container = $( '<div class="function">' +
 								'function <span class="nameContainer">' + this.name + '</span>(' +
-								'<div id="parameterContainer"></div>' +
-								'<div class="nameContainer"> ) </div>' +
+								'<div id="parameterContainer"></div>)' +
 							'</div>' );
 
 		this.container.find( '.nameContainer' ).bind( 'click', onEdit );

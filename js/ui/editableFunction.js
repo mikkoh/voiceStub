@@ -9,8 +9,7 @@ define( function() {
 			.unbind( 'blur', onFinish )
 			.bind( 'click', onClick );
 
-			console.log( $( this ).html() );
-			var nameSplit = $( this ).html().split( /<\/?[^>]*>/).join(' ').split( '\n' ).join( ' ' ).split( ' ' );
+			var nameSplit = $( this ).html().split( /<\/?[^>]*>/).join(' ').split( '\n' ).join( ' ' ).split(/\W/).join(' ').split( ' ' );
 
 			//now we want to camel case this name
 			for( var i = 1, len = nameSplit.length; i < len; i++ ) {
@@ -36,14 +35,12 @@ define( function() {
 					$( this ).blur();
 				break;
 
-				//Space Key
+				//Space key
 				case 32:
 					ev.preventDefault();
 				break;
 			}
 		};
-
-		console.log( this );
 
 		$( this )
 		.attr( 'contenteditable', true )

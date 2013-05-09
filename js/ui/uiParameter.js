@@ -9,7 +9,7 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/editableFunction' ], function( $, UIBas
 	UIParameter.prototype.init = function( initData ) {
 		this.name = initData[ 0 ];
 
-		this.container = $( '<div class="parameter">' + this.name + '</div>' )
+		this.container = $( '<span class="parameter">' + this.name + '</span>' )
 		.bind( 'click', onEdit )
 		.appendTo( this.parentContainer );
 	};
