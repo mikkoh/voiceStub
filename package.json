@@ -1,0 +1,8 @@
+{
+  "name": "voiceStub",
+  "version": "0.1.0",
+  "dependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-qunit": "~0.2.1"
+  }
+}

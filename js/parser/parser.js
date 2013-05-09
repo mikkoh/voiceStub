@@ -189,8 +189,6 @@ define( function() {
 		}
 
 
-		console.log( 'pre', scrubbedArr, rValItem );
-
 		//figure out major action or key noun
 		if( nounIndices.length > 0 ) {
 
@@ -263,7 +261,7 @@ define( function() {
 			rValItem.parsed = false;
 		}
 
-		console.log( rValItem );
+
 
 		return rValItem;
 	};

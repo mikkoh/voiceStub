@@ -8,7 +8,7 @@ requirejs.config({
 
 
 
-requirejs(['lib/jquery', 'parser/parser', 'ui/uiFactory'], 
+requirejs( ['lib/jquery', 'parser/parser', 'ui/uiFactory'], 
 function( $, Parser, UIFactory ) {
 	$( function(){
 		if( 'webkitSpeechRecognition' in window) {
