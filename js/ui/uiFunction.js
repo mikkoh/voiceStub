@@ -1,4 +1,4 @@
-define( [ 'lib/jquery', 'ui/uiBase', 'ui/editableFunction' ], function( $, UIBase, onEdit ) {
+define( [ 'lib/jquery', 'ui/uiBase' ], function( $, UIBase ) {
 	
 	var UIFunction = function( parentContainer ) {
 		this.parentContainer = parentContainer;
@@ -15,9 +15,11 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/editableFunction' ], function( $, UIBas
 								'<div id="parameterContainer"></div>)' +
 							'</div>' );
 
-		this.container.find( '.nameContainer' ).bind( 'click', onEdit );
-
 		this.parameterContainer = this.container.find( '#parameterContainer' );
+
+		this.onNameClick = this.onNameClick.bind( this );
+		this.nameContainer = this.container.find( '.nameContainer' );
+		this.nameContainer.bind( 'click', this.onNameClick );
 	};
 
 	UIFunction.prototype.addItem = function( ui ) {
