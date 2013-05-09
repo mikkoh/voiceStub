@@ -5,7 +5,8 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/editableFunction' ], function( $, UIBas
 	}
 
 	UIClass.prototype = Object.create( UIBase.prototype );
-	UIClass.prototype.functionContainer = null
+
+	UIClass.prototype.functionContainer = null;
 
 	UIClass.prototype.init = function( initData ) {
 		this.name = initData[ 0 ];
@@ -16,9 +17,12 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/editableFunction' ], function( $, UIBas
 								'}' +
 							'</div>' );
 
-		this.container.find( '.nameContainer' ).bind( 'click', onEdit );
-
+		
 		this.functionContainer = this.container.find( '#functionContainer' );
+
+		this.onNameClick = this.onNameClick.bind( this );
+		this.nameContainer = this.container.find( '.nameContainer' );
+		this.nameContainer.bind( 'click', this.onNameClick );
 	};
 
 	UIClass.prototype.addItem = function( ui ) {

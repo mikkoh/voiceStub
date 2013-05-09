@@ -10,8 +10,11 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/editableFunction' ], function( $, UIBas
 		this.name = initData[ 0 ];
 
 		this.container = $( '<span class="parameter">' + this.name + '</span>' )
-		.bind( 'click', onEdit )
 		.appendTo( this.parentContainer );
+
+		this.onNameClick = this.onNameClick.bind( this );
+		this.nameContainer = this.container;
+		this.nameContainer.bind( 'click', this.onNameClick );
 	};
 
 	return UIParameter;
