@@ -179,7 +179,7 @@ define( function() {
 				if( ( idx = this.isNoun( scrubbedArr[ i ] ) ) != -1 ) {
 					nounIndices.push( { wordIDX: i, dictionaryIDX: idx } );
 				} else if( ( idx = this.isAddedNoun( scrubbedArr[ i ]) ) != -1 ) {
-					nounIndices.push( { wordIDX: i, dictionaryIDX: idx } );
+					nounIndices.push( { wordIDX: i, dictionaryIDX: idx, isAdded: true } );
 
 					if( nounIndices.length == 1 ) {
 						keyNounIsAdded = true;
@@ -209,11 +209,14 @@ define( function() {
 				var precedingWordIDX = nounIndices[ 0 ].wordIDX - precedingWordOff;
 				var precedingWord = scrubbedArr[ precedingWordIDX ];
 
-				var verbIDX = this.isVerbForNoun( precedingWord, nounIndices[ 0 ].dictionaryIDX );
+				if( !nounIndices[ 0 ].isAdded ) {
+					var verbIDX = this.isVerbForNoun( precedingWord, nounIndices[ 0 ].dictionaryIDX );
 
-				//this was not a registered verb
-				if( verbIDX != -1 ) {
 					rValItem.func = Dictionary.nouns[ nounIdx ].verbs[ verbIDX ].func;
+				} else {
+					var verbIDX = this.isVerbForAddedNoun( precedingWord, nounIndices[ 0 ].dictionaryIDX );
+
+					rValItem.func = Dictionary.addedNouns[ nounIdx ].verbs[ verbIDX ].func;
 				}
 			} else {
 
@@ -333,6 +336,20 @@ define( function() {
 
 	Parser.prototype.isVerbForNoun = function( possibleVerb, nounDictionaryIDX ) {
 		var verbs = Dictionary.nouns[ nounDictionaryIDX ].verbs;
+		var foundIdx = -1;
+
+		for( var i = 0; i < verbs.length; i++ ) {
+			if( verbs[ i ].value == possibleVerb ) {
+				foundIdx = i;
+				break;
+			}
+		}
+
+		return foundIdx;
+	};
+
+	Parser.prototype.isVerbForAddedNoun = function( possibleVerb, nounDictionaryIDX ) {
+		var verbs = Dictionary.addedNouns[ nounDictionaryIDX ].verbs;
 		var foundIdx = -1;
 
 		for( var i = 0; i < verbs.length; i++ ) {
