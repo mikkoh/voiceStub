@@ -1,4 +1,4 @@
-define( [ 'lib/jquery', 'ui/uiBase' ], function( $, UIBase ) {
+define( [ 'lib/jquery', 'ui/uiBase', 'ui/editableFunction' ], function( $, UIBase, onEdit ) {
 	
 	var UIParameter = function( parentContainer ) {
 		this.parentContainer = parentContainer;
@@ -9,7 +9,9 @@ define( [ 'lib/jquery', 'ui/uiBase' ], function( $, UIBase ) {
 	UIParameter.prototype.init = function( initData ) {
 		this.name = initData[ 0 ];
 
-		this.container = $( '<div class="parameter">' + this.name + '</div>' ).appendTo( this.parentContainer );
+		this.container = $( '<div class="parameter">' + this.name + '</div>' )
+		.bind( 'click', onEdit )
+		.appendTo( this.parentContainer );
 	};
 
 	return UIParameter;

@@ -1,4 +1,4 @@
-define( [ 'lib/jquery', 'ui/uiBase' ], function( $, UIBase ) {
+define( [ 'lib/jquery', 'ui/uiBase', 'ui/editableFunction' ], function( $, UIBase, onEdit ) {
 	
 	var UIClass = function( parentContainer ) {
 		this.parentContainer = parentContainer;
@@ -11,10 +11,12 @@ define( [ 'lib/jquery', 'ui/uiBase' ], function( $, UIBase ) {
 		this.name = initData[ 0 ];
 
 		this.container = $( '<div class="class">' +
-								'<div class="nameContainer"> class ' + this.name + ' {</div>' +
+								'class<span class="nameContainer">' + this.name + ' </span>{' +
 								'<div id="functionContainer"></div>' +
 								'<div class="nameContainer">}</div>' +
 							'</div>' );
+
+		this.container.find( '.nameContainer' ).bind( 'click', onEdit );
 
 		this.functionContainer = this.container.find( '#functionContainer' );
 	};
