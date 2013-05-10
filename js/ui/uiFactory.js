@@ -69,16 +69,18 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 
 					curItem = this.factory.getParameter( command[ i ].parameters[ 0 ], functionToActOn );
 
-					if( curItem === null ) {
-						curItem = new UIParameter( this.factory.container );
-						curItem.init( command[ i ].parameters );
+					if( functionToActOn !== null ) {
+						if( curItem === null ) {
+							curItem = new UIParameter( this.factory.container );
+							curItem.init( command[ i ].parameters );
 
-						this.factory.addParameter( curItem, functionToActOn );
+							this.factory.addParameter( curItem, functionToActOn );
 
-						functionToActOn.addItem( curItem );
+							functionToActOn.addItem( curItem );
+						}
+
+						curItem.add();
 					}
-
-					curItem.add();
 				break;
 
 				case 'deleteClass':
@@ -298,8 +300,10 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 	UIFactory.prototype.getParameter = function( item, parentFunction ) {
 		var rVal = null;
 
-		if( this.parametersForFunctions[ parentFunction.name ] ) {
-			rVal = this._getItemInArr( item, this.parametersForFunctions[ parentFunction.name ] );
+		if( parentFunction ) {
+			if( this.parametersForFunctions[ parentFunction.name ] ) {
+				rVal = this._getItemInArr( item, this.parametersForFunctions[ parentFunction.name ] );
+			}
 		}
 
 		return rVal;

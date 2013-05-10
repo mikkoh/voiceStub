@@ -31,5 +31,13 @@ define( function() {
 		.css( 'background', '#FFF' );
 	};
 
+	UIEntry.prototype.setValue = function( value ) {
+		this.entry.val( value );
+	};
+
+	UIEntry.prototype.getValue = function() {
+		return this.entry.val();
+	};
+
 	return UIEntry;
 });

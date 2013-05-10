@@ -29,11 +29,71 @@ function( $, Parser, UIFactory, UIEntry ) {
 
 
 			var txtField = $( '#txtField' );
-			txtField.keyup( function() {
-				console.log( parser.parse( txtField.val() ) );
-			});
-			
 
+			txtField.keyup( function( ev ) {
+				if( ev.which == 13 ) {
+					txtField.blur();
+
+					uiFactory.addCommands( parser.parse( txtField.val() ) );
+
+					classEntry.deActivate();
+					classEntry.setValue('');
+					functionEntry.deActivate();
+					functionEntry.setValue('');
+					parameterEntry.deActivate();
+					parameterEntry.setValue('');
+
+					txtField.val('');
+				} else {
+					var curParsedData = parser.parse( txtField.val() );
+					var hasClass = false;
+					var hasFunction = false;
+					var hasParameter = false;
+
+					for( var i = 0; i < curParsedData.length; i++ ) {
+						switch( curParsedData[ i ].func ) {
+							case 'createClass':
+								applyParsedData( classEntry, curParsedData[ i ] );
+								hasClass = true;
+							break;
+
+							case 'createFunction':
+								applyParsedData( functionEntry, curParsedData[ i ] );
+								hasFunction = true;
+							break;
+
+							case 'addParameter':
+								applyParsedData( parameterEntry, curParsedData[ i ] );
+								hasParameter = true;
+							break;
+						}
+					}
+
+					if( !hasClass ) {
+						classEntry.deActivate();
+						classEntry.setValue('');
+					}
+
+					if( !hasFunction ) {
+						functionEntry.deActivate();
+						functionEntry.setValue('');
+					}
+
+					if( !hasParameter ) {
+						parameterEntry.deActivate();
+						parameterEntry.setValue('');
+					}
+				}
+			});
+
+			function applyParsedData( entry, parsedData ) {
+				entry.activate();
+
+				if( parsedData.parameters ) {
+					entry.setValue( parsedData.parameters[ 0 ] );
+				}				
+			}
+			
 
 
 
