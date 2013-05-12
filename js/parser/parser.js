@@ -84,7 +84,7 @@ define( function() {
 		//clean up this array of junk
 		for( var i = scrubbedArr.length - 1; i >= 0; i-- ) {
 			for( var j = 0; j < Dictionary.ignore.length; j++ ) {
-				if( this.isIgnore( scrubbedArr[ i ] ) != -1 ) {
+				if( scrubbedArr[ i ] == '' || this.isIgnore( scrubbedArr[ i ] ) != -1 ) {
 					scrubbedArr.splice( i, 1 );
 				}
 			}
@@ -93,7 +93,7 @@ define( function() {
 
 		//split the command by the word with
 		var splitStart = 0;
-		for( var i = 0; i < scrubbedArr.length; i++ ) {
+		for( var i = 0; i < scrubbedArr.length - 1; i++ ) {
 
 			//with a function called X
 			//and add a function called X
@@ -117,7 +117,6 @@ define( function() {
 		}
 
 
-		
 		return rVal;	
 	};
 

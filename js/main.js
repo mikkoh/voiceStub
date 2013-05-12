@@ -35,6 +35,7 @@ function( $, Parser, UIFactory, UIEntry ) {
 					txtField.blur();
 
 					uiFactory.addCommands( parser.parse( txtField.val() ) );
+					console.log( parser.parse( txtField.val() ) );
 
 					classEntry.deActivate();
 					classEntry.setValue('');
