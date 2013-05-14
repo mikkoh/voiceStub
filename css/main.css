@@ -1,11 +1,12 @@
 body {
 	padding: 0;
+	font-family: 'Montserrat', sans-serif;
+	background-color: #bbb8b3;
 }
 
 
 .class {
 	max-width: 320px;
-	background-color: #CAFE00;
 	padding: 5px;
 	margin: 5px;
 	line-height: 35px;

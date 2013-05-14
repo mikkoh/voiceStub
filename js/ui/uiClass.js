@@ -1,4 +1,4 @@
-define( [ 'lib/jquery', 'ui/uiBase' ], function( $, UIBase ) {
+define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiClassName' ], function( $, UIBase, UIClassName ) {
 	
 	var UIClass = function( parentContainer ) {
 		this.parentContainer = parentContainer;
@@ -7,22 +7,34 @@ define( [ 'lib/jquery', 'ui/uiBase' ], function( $, UIBase ) {
 	UIClass.prototype = Object.create( UIBase.prototype );
 
 	UIClass.prototype.functionContainer = null;
+	UIClass.prototype.name = null;
 
 	UIClass.prototype.init = function( initData ) {
 		this.name = initData[ 0 ];
 
 		this.container = $( '<div class="class">' +
-								'class <span class="nameContainer">' + this.name + ' </span> {' +
 								'<div id="functionContainer"></div>' +
-								'}' +
 							'</div>' );
 
 		
+		this.name = new UIClassName( this.container );
+		this.name.init( initData );
+
+
+
 		this.functionContainer = this.container.find( '#functionContainer' );
 
 		this.onNameClick = this.onNameClick.bind( this );
 		this.nameContainer = this.container.find( '.nameContainer' );
 		this.nameContainer.bind( 'click', this.onNameClick );
+	};
+
+	UIClass.prototype.animateIn = function( delay ) {
+		this.name.animateIn( delay );
+	};
+
+	UIClass.prototype.animateOut = function( delay ) {
+		this.name.animateOut( delay );
 	};
 
 	UIClass.prototype.addItem = function( ui ) {

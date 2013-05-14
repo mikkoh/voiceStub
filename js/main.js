@@ -28,6 +28,11 @@ function( $, Parser, UIFactory, UIEntry ) {
 			parameterEntry.init();
 
 
+
+
+			uiFactory.addCommands( parser.parse( 'create a class named mikko' ) );
+
+
 			var txtField = $( '#txtField' );
 
 			txtField.keyup( function( ev ) {
