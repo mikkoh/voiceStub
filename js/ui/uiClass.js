@@ -7,11 +7,12 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiClassName' ], function( $, UIBase, UI
 	UIClass.prototype = Object.create( UIBase.prototype );
 
 	UIClass.prototype.functionContainer = null;
-	UIClass.prototype.name = null;
 	UIClass.prototype.nameUI = null;
+	UIClass.prototype.functions = null;
 
 	UIClass.prototype.init = function( initData, onInit ) {
 		this.name = initData[ 0 ];
+		this.functions = [];
 
 		this.container = $( '<div class="class"></div>' );
 
@@ -20,7 +21,8 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiClassName' ], function( $, UIBase, UI
 
 		this.functionContainer = $('<div id="functionContainer"></div>')
 		.css( 'position', 'relative' )
-		.css( 'top', 74 )
+		.css( 'left', 74 )
+		.css( 'top', 94 )
 		.appendTo( this.container );
 
 		this.onNameClick = this.onNameClick.bind( this );
@@ -30,6 +32,10 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiClassName' ], function( $, UIBase, UI
 
 	UIClass.prototype.animateIn = function( delay ) {
 		this.nameUI.animateIn( delay );
+
+		for( var i = 0, len = this.functions.length; i < len; i++ ) {
+			this.functions[ i ].animateIn( i * 0.5 + 0.5 );
+		}
 	};
 
 	UIClass.prototype.animateOut = function( delay ) {
@@ -37,6 +43,7 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiClassName' ], function( $, UIBase, UI
 	};
 
 	UIClass.prototype.addItem = function( ui ) {
+		this.functions.push( ui );
 		ui.changeContainer( this.functionContainer );
 	};
 

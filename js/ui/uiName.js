@@ -1,8 +1,11 @@
 define( [ 'lib/jquery' ], function( $ ) {
-	var UIName = function( container ) {
+	var UIName = function( container, fontSize, height ) {
+		this.fontSize = fontSize;
+		this.height = height;
 		this.parentContainer = container;
 	};
 
+	UIName.prototype.fontSize = 0;
 	UIName.prototype.width = 0;
 	UIName.prototype.height = 0;
 	UIName.prototype.shadowAmount = 1;
@@ -10,8 +13,6 @@ define( [ 'lib/jquery' ], function( $ ) {
 
 	UIName.prototype.init = function( initData, onInit ) {
 		this.container = $('<div><div id="text">' + initData + '</div><div id="shadow"></div></div>').appendTo( this.parentContainer );
-	
-		this.height = 74;
 
 		this.shadow = this.container.find( '#shadow' )
 		.css( 'height', this.height )
@@ -22,10 +23,9 @@ define( [ 'lib/jquery' ], function( $ ) {
 		.css( 'position', 'absolute' )
 		.css( 'overflow', 'hidden' )
 		.css( 'height', this.height )
-		.css( 'line-height', '70px' )
+		.css( 'line-height', this.height + 'px' )
 		.css( 'visiblity', 'hidden' )
-		.css( 'font-size', 30 )
-		.css( 'left', 84 )
+		.css( 'font-size', this.fontSize )
 		.ready( function() {
 			this.width = this.container.width();
 			
@@ -44,7 +44,7 @@ define( [ 'lib/jquery' ], function( $ ) {
 		.css( 'visiblity', 'visible' );
 
 
-		TweenLite.to( this, 2, { shadowAmount: 0, 
+		TweenLite.to( this, 1, { shadowAmount: 0, 
 		onUpdate: function(){
 			this.shadow
 			.css( 'box-shadow', 
@@ -54,7 +54,8 @@ define( [ 'lib/jquery' ], function( $ ) {
 		onComplete: function() {
 			// this.shadow
 			// .css( 'box-shadow', 'none');
-		}.bind( this ) });
+		}.bind( this ),
+		delay: delay });
 	};
 
 	UIName.prototype.animateOut = function( delay ) {

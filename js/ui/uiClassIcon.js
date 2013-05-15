@@ -23,6 +23,7 @@ define( [ 'lib/jquery', 'lib/TweenLite' ], function( $, TweenLite ) {
 		.css( 'height', 113 )
 		.css( 'left', -14 )
 		.css( 'top', -10 )
+		.css( 'visibility', 'hidden' )
 		.css( '-webkit-transform-style', 'preserve-3d' )
 		.css( '-webkit-transform', 'perspective(1200) rotateY(-90deg)' );
 
@@ -43,7 +44,9 @@ define( [ 'lib/jquery', 'lib/TweenLite' ], function( $, TweenLite ) {
 	};
 
 	UIClassIcon.prototype.animateIn = function( delay ) {
-		TweenLite.to( this.container, 0.5, { rotationY: 0, ease: Quad.easeOut, delay: delay } );
+		TweenLite.to( this.container, 0.5, { rotationY: 0, ease: Quad.easeOut, delay: delay, onStart: function() {
+			this.container.css( 'visibility', 'visible' );
+		}.bind( this ) } );
 	};
 
 	UIClassIcon.prototype.animateOut = function( delay ) {

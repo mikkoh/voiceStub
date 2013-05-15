@@ -25,8 +25,9 @@ define( [ 'lib/jquery', 'ui/uiName', 'ui/uiClassIcon' ], function( $, UIName, UI
 		this.icon = new UIClassIcon( this.container );
 		this.icon.init( initData, onInitItems );
 
-		this.name = new UIName( this.container );
+		this.name = new UIName( this.container, 30, 74 );
 		this.name.init( initData, onInitItems );
+		this.name.container.css( 'left', 84 );
 	};
 
 	UIClassName.prototype.animateIn = function( delay ) {
