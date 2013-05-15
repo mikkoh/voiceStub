@@ -17,27 +17,24 @@ define( [ 'lib/jquery', 'lib/TweenLite' ], function( $, TweenLite ) {
 		this.highlight2 = $( '<img src="images/functionHighLight2.png" width="27" height="27" />' ).appendTo( this.container );
 
 		this.container
-		.css( 'position', 'absolute' )
 		.css( 'display', 'inline-block' )
-		.css( 'width', 113 )
-		.css( 'height', 113 )
-		.css( 'left', -13 )
-		.css( 'top', -11 )
+		.css( 'width', 70 )
+		.css( 'height', 48 )
 		.css( 'visibility', 'hidden' )
 		.css( '-webkit-transform-style', 'preserve-3d' )
 		.css( '-webkit-transform', 'perspective(1200) rotateY(-90deg)' );
 
 		this.icon
 		.css( 'position', 'absolute' )
-		.css( '-webkit-transform', 'translate3d(0px, 0px, -20px)' );
+		.css( '-webkit-transform', 'translate3d(0px, -10px, -20px)' );
 
 		this.highlight1
 		.css( 'position', 'absolute' )
-		.css( '-webkit-transform', 'translate3d(17px, -10px, 0px)' );
+		.css( '-webkit-transform', 'translate3d(17px, -20px, 0px)' );
 
 		this.highlight2
 		.css( 'position', 'absolute' )
-		.css( '-webkit-transform', 'translate3d(5px, 0px, 0px)' );
+		.css( '-webkit-transform', 'translate3d(5px, -10px, 0px)' );
 
 		if( onInit )
 			onInit();
