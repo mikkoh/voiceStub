@@ -46,8 +46,6 @@ define( [ 'lib/jquery' ], function( $ ) {
 
 		TweenLite.to( this, 2, { shadowAmount: 0, 
 		onUpdate: function(){
-			console.log( this.shadowAmount );
-
 			this.shadow
 			.css( 'box-shadow', 
 				( this.width * -this.shadowAmount ) + 'px 0px 50px rgba( 187, 184, 179, ' + this.shadowAmount + ') inset,' +

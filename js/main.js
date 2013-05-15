@@ -27,11 +27,8 @@ function( $, Parser, UIFactory, UIEntry ) {
 			functionEntry.init();
 			parameterEntry.init();
 
-
-
-
-			uiFactory.addCommands( parser.parse( 'create a class named mikko' ) );
-
+			uiFactory.addCommands( parser.parse( 'create a class named mikko with a function named draw' ) );
+			uiFactory.addCommands( parser.parse( 'add a function named program to mikko' ) );
 
 			var txtField = $( '#txtField' );
 

@@ -28,9 +28,9 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 					curItem = this.factory.getClass( command[ i ].parameters[ 0 ] );
 
 					if( curItem === null ) {
-						curItem = new UIClass( this.factory.container );
+						nClass = curItem = new UIClass( this.factory.container );
 						curItem.init( command[ i ].parameters, function() {
-							curItem.animateIn();
+							nClass.animateIn();
 						} );
 
 						this.factory.addClass( curItem );

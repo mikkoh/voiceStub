@@ -51,7 +51,7 @@ define( [ 'lib/jquery', 'lib/TweenLite' ], function( $, TweenLite ) {
 	};
 
 	UIClassIcon.prototype.destroy = function() {
-		
+		this.container.remove();
 	};
 
 	return UIClassIcon;
