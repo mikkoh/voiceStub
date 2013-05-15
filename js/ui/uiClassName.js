@@ -8,21 +8,32 @@ define( [ 'lib/jquery', 'ui/uiName', 'ui/uiClassIcon' ], function( $, UIName, UI
 	UIClassName.prototype.icon = null;
 	UIClassName.prototype.name = null;
 
-	UIClassName.prototype.init = function( initData ) {
+	UIClassName.prototype.init = function( initData, onInit ) {
 		this.container = $('<div></div>').appendTo( this.parentContainer );
 		this.container.css( 'position', 'relative' );
 
+		var numInit = 0;
+		var numItemsToInit = 2;
+		var onInitItems = function() {
+			if( onInit ) {
+				if( ++numInit == numItemsToInit ) {
+					onInit();
+				}
+			}
+		};
+
 		this.icon = new UIClassIcon( this.container );
-		this.icon.init();
+		this.icon.init( initData, onInitItems );
 
 		this.name = new UIName( this.container );
-		this.name.init( initData );
-
-		this.animateIn();
+		this.name.init( initData, onInitItems );
 	};
 
 	UIClassName.prototype.animateIn = function( delay ) {
-		this.name.animateIn( delay );
+		delay = delay === undefined? 0 : delay;
+
+		this.icon.animateIn( delay );
+		this.name.animateIn( delay + 0.25 );
 	};
 
 	UIClassName.prototype.animateOut = function( delay ) {

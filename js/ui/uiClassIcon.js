@@ -1,4 +1,4 @@
-define( [ 'lib/jquery' ], function( $ ) {
+define( [ 'lib/jquery', 'lib/TweenLite' ], function( $, TweenLite ) {
 	var UIClassIcon = function( container ) {
 		this.parentContainer = container;
 	};
@@ -9,7 +9,7 @@ define( [ 'lib/jquery' ], function( $ ) {
 	UIClassIcon.prototype.highlight1 = null;
 	UIClassIcon.prototype.highlight2 = null;
 
-	UIClassIcon.prototype.init = function( initData ) {
+	UIClassIcon.prototype.init = function( initData, onInit ) {
 		this.container = $( '<div><div>' ).appendTo( this.parentContainer );
 		
 		this.icon = $( '<img src="images/classLetter.png" width="113" height="113" />' ).appendTo( this.container );
@@ -24,7 +24,7 @@ define( [ 'lib/jquery' ], function( $ ) {
 		.css( 'left', -14 )
 		.css( 'top', -10 )
 		.css( '-webkit-transform-style', 'preserve-3d' )
-		.css( '-webkit-transform', 'perspective(1200) rotateY(-10deg)' );
+		.css( '-webkit-transform', 'perspective(1200) rotateY(-90deg)' );
 
 		this.icon
 		.css( 'position', 'absolute' )
@@ -37,10 +37,13 @@ define( [ 'lib/jquery' ], function( $ ) {
 		this.highlight2
 		.css( 'position', 'absolute' )
 		.css( '-webkit-transform', 'translate3d(-12px, -12px, 0px)' );
+
+		if( onInit )
+			onInit();
 	};
 
 	UIClassIcon.prototype.animateIn = function( delay ) {
-		
+		TweenLite.to( this.container, 0.5, { rotationY: 0, ease: Quad.easeOut, delay: delay } );
 	};
 
 	UIClassIcon.prototype.animateOut = function( delay ) {

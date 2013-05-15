@@ -9,18 +9,15 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiClassName' ], function( $, UIBase, UI
 	UIClass.prototype.functionContainer = null;
 	UIClass.prototype.name = null;
 
-	UIClass.prototype.init = function( initData ) {
+	UIClass.prototype.init = function( initData, onInit ) {
 		this.name = initData[ 0 ];
 
 		this.container = $( '<div class="class">' +
 								'<div id="functionContainer"></div>' +
 							'</div>' );
 
-		
 		this.name = new UIClassName( this.container );
-		this.name.init( initData );
-
-
+		this.name.init( initData, onInit );
 
 		this.functionContainer = this.container.find( '#functionContainer' );
 
