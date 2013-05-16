@@ -1,28 +1,36 @@
 define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'lib/TweenLite' ], function( $, UIBase, UIName, TweenLite ) {
 	
-	var UIParameter = function( parentContainer ) {
+	var UIParameter = function( parentContainer, initData ) {
 		this.parentContainer = parentContainer;
+		this.initData = initData;
 	}
 
 	UIParameter.prototype = Object.create( UIBase.prototype );
 	UIParameter.prototype.nameUI = null;
 	UIParameter.prototype.separator = null;
 
-	UIParameter.prototype.init = function( initData ) {
-		this.name = initData[ 0 ];
+	UIParameter.prototype.init = function( onInit ) {
+		this.name = this.initData[ 0 ];
+		this.onInit = onInit;
 
 		this.container = $( '<div class="parameter"><img id="separator" src="images/parameterSeparator.png" width="7" height="47" /></div>' )
 		.css( 'display', 'inline-block')
 		.appendTo( this.parentContainer );
 
-		this.separator = this.container.find('#separator')
-		.css( 'margin-left', 10 )
-		.css( 'height', 0 );
-
+		this.addItemToInit();
 		this.nameUI = new UIName( this.container );
-		this.nameUI.init( initData );
+		this.nameUI.init( this.initData, this.onItemInit.bind( this ) );
 		this.nameUI.container.css( 'margin-top', 11 );
 		this.nameUI.container.css( 'margin-left', 10 );
+
+		this.addItemToInit();
+		this.separator = this.container.find('#separator')
+		.css( 'margin-left', 10 )
+		.css( 'height', 0 )
+		.load( this.onItemInit.bind( this ) );
+
+		this.initialized = true;
+		this.onItemInit();
 	};
 
 	UIParameter.prototype.animateIn = function( delay ) {

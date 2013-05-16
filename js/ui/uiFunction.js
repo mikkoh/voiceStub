@@ -1,7 +1,9 @@
 define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], function( $, UIBase, UIName, UIIcon ) {
 	
-	var UIFunction = function( parentContainer ) {
+	var UIFunction = function( parentContainer, initData ) {
 		this.parentContainer = parentContainer;
+		this.parameters = [];
+		this.initData = initData;
 	}
 
 	UIFunction.prototype = Object.create( UIBase.prototype );
@@ -10,10 +12,10 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 	UIFunction.prototype.nameUI = null;
 	UIFunction.prototype.parameters = null;
 
-	UIFunction.prototype.init = function( initData, onInit ) {
-		this.name = initData[ 0 ];
-		this.parameters = [];
-
+	UIFunction.prototype.init = function( onInit ) {
+		this.name = this.initData[ 0 ];
+		this.onInit = onInit;
+		
 		this.container = $( '<div class="function"></div>' )
 		.css( 'font-size', 20 )
 		.appendTo( this.parentContainer );
@@ -28,11 +30,13 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 			}
 		};
 		
-		this.iconUI = new UIIcon( this.container );
-		this.iconUI.init( initData, onItemInit );
+		this.addItemToInit();
+		this.iconUI = new UIIcon( this.container, this.onItemInit.bind( this ) );
+		this.iconUI.init( this.initData, onItemInit );
 
-		this.nameUI = new UIName( this.container );
-		this.nameUI.init( initData, onItemInit );
+		this.addItemToInit();
+		this.nameUI = new UIName( this.container, this.onItemInit.bind( this ) );
+		this.nameUI.init( this.initData, onItemInit );
 		this.nameUI.container.css( 'margin-top', 11 );
 
 		this.parameterContainer = $( '<div></div>' )
@@ -41,19 +45,19 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 		.css( 'width', '40%' )
 		.appendTo( this.container );
 
+		for( var i = 0; i < this.parameters.length; i++ ) {
+			this.parameters[i].init( this.onItemInit.bind( this ) );
+			this.parameters[i].changeContainer( this.parameterContainer );
+		}
 
-
-		// this.parameterContainer = this.container.find( '#parameterContainer' );
-
-		// this.onNameClick = this.onNameClick.bind( this );
-		// this.nameContainer = this.container.find( '.nameContainer' );
-		// this.nameContainer.bind( 'click', this.onNameClick );
+		this.initialized = true;
+		this.onItemInit();
 	};
 
 	UIFunction.prototype.animateIn = function( delay ) {
-		this.nameUI.animateIn( delay );
 		this.iconUI.animateIn( delay );
-
+		this.nameUI.animateIn( delay );
+		
 		for( var i = 0, len = this.parameters.length; i < len; i++ ) {
 			this.parameters[ i ].animateIn( delay + 0.5 + i * 0.3 );
 		}
@@ -64,9 +68,16 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 	};
 
 	UIFunction.prototype.addItem = function( ui ) {
+		this.addItemToInit();
 		this.parameters.push( ui );
 
-		ui.changeContainer( this.parameterContainer );
+		if( this.initialized ) {
+			if( !ui.initialized ) {
+				ui.init( this.onItemInit.bind( this ) );
+			}
+
+			ui.changeContainer( this.parameterContainer );
+		}
 	};
 
 	UIFunction.prototype.onNameChange = function( nName, oValue ) {

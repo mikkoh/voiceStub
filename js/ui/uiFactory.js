@@ -14,6 +14,7 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 		var classToActOn = null;
 		var functionToActOn = null;
 		var numCommandsRun = 0;
+		var newTopLevelItems = [];
 
 		for( var i = 0; i < command.length; i++ ) {
 			//We want to stop the execution of commands if an error was returned
@@ -28,17 +29,13 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 					curItem = this.factory.getClass( command[ i ].parameters[ 0 ] );
 
 					if( curItem === null ) {
-						var nClass = curItem = new UIClass( this.factory.container );
-						curItem.init( command[ i ].parameters, function() {
-							nClass.animateIn();
-						} );
+						var nClass = curItem = new UIClass( this.factory.container, command[ i ].parameters );
 
 						this.factory.addClass( curItem );
 					}
 
-					curItem.add();
-
 					classToActOn = curItem;
+					newTopLevelItems.push( nClass );
 				break;
 
 				case 'createFunction':
@@ -49,9 +46,8 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 					curItem = this.factory.getFunction( command[ i ].parameters[ 0 ], classToActOn );
 
 					if( curItem === null ) {
-						curItem = new UIFunction( this.factory.container );	
-						curItem.init( command[ i ].parameters );
-
+						curItem = new UIFunction( this.factory.container, command[ i ].parameters );	
+						
 						this.factory.addFunction( curItem, classToActOn );
 
 						if( classToActOn !== null ) {
@@ -59,9 +55,11 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 						}
 					}
 
-					curItem.add();
-
 					functionToActOn = curItem;
+
+					if( !classToActOn ) {
+						newTopLevelItems.push( curItem );
+					}
 				break;
 
 				case 'addParameter':
@@ -73,15 +71,12 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 
 					if( functionToActOn !== null ) {
 						if( curItem === null ) {
-							curItem = new UIParameter( this.factory.container );
-							curItem.init( command[ i ].parameters );
+							curItem = new UIParameter( this.factory.container, command[ i ].parameters );
 
 							this.factory.addParameter( curItem, functionToActOn );
 
 							functionToActOn.addItem( curItem );
 						}
-
-						curItem.add();
 					}
 				break;
 
@@ -121,6 +116,18 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 					throw new Error( 'Command ' + command[ i ].func + 'not defined' );
 				break;
 			}
+		}
+
+
+
+		//now we need to loop through top level items and init them and animate them in
+		for( var i = 0, len = newTopLevelItems.length; i < len; i++ ) {
+			var curItem = newTopLevelItems[ i ];
+
+			curItem.init( function() {
+				curItem.animateIn();
+			});
+
 		}
 
 		return numCommandsRun;

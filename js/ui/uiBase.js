@@ -7,11 +7,15 @@ define( function() {
 	UIBase.prototype.container = null;
 	UIBase.prototype.nameContainer = null;
 	UIBase.prototype.parentContainer = null;
+	UIBase.prototype.initialized = false;
+	UIBase.prototype.numItemsInit = 0;
+	UIBase.prototype.numItemsToInit = 1;
+	UIBase.prototype.onInit = null;
 
 	UIBase.prototype.changeContainer = function( parentContainer ) {
 		this.parentContainer = parentContainer;
 		
-		this.container.appendTo( parentContainer );
+		this.container.appendTo( this.parentContainer );
 	};
 
 	UIBase.prototype.add = function() {
@@ -74,6 +78,17 @@ define( function() {
 		.bind( 'keydown', onKeyDown )
 		.bind( 'blur', onFinish )
 		.unbind( 'click', this.onNameClick );
+	};
+
+	UIBase.prototype.addItemToInit = function() {
+		this.numItemsToInit++;
+	};
+
+	UIBase.prototype.onItemInit = function() {
+		if( this.onInit && ++this.numItemsInit == this.numItemsToInit ) {
+			this.onInit();
+			this.onInit = null;
+		}
 	};
 
 	return UIBase;
