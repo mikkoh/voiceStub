@@ -17,19 +17,16 @@ define( [ 'lib/jquery', 'lib/TweenLite' ], function( $, TweenLite ) {
 		this.highlight2 = $( '<img src="images/classHighLight2.png" width="45" height="45" />' ).appendTo( this.container );
 
 		this.container
-		.css( 'position', 'absolute' )
 		.css( 'display', 'inline-block' )
-		.css( 'width', 113 )
-		.css( 'height', 113 )
-		.css( 'left', -14 )
-		.css( 'top', -10 )
+		.css( 'width', 86 )
+		.css( 'height', 76 )
 		.css( 'visibility', 'hidden' )
 		.css( '-webkit-transform-style', 'preserve-3d' )
 		.css( '-webkit-transform', 'perspective(1200) rotateY(-90deg)' );
 
 		this.icon
 		.css( 'position', 'absolute' )
-		.css( '-webkit-transform', 'translate3d(0px, 0px, -20px)' );
+		.css( '-webkit-transform', 'translate3d(-10px, -10px, -20px)' );
 
 		this.highlight1
 		.css( 'position', 'absolute' )

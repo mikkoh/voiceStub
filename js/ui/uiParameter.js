@@ -6,15 +6,16 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName' ], function( $, UIBase, UIName 
 
 	UIParameter.prototype = Object.create( UIBase.prototype );
 	UIParameter.prototype.nameUI = null;
+	UIParameter.prototype.separator = null;
 
 	UIParameter.prototype.init = function( initData ) {
 		this.name = initData[ 0 ];
 
-		this.container = $( '<div class="parameter"><img src="images/parameterSeparator.png" width="7" height="47" /></div>' )
+		this.container = $( '<div class="parameter"><img id="separator" src="images/parameterSeparator.png" width="7" height="47" /></div>' )
 		.css( 'display', 'inline-block')
 		.appendTo( this.parentContainer );
 
-		this.container.find('img')
+		this.separator = this.container.find('#separator')
 		.css( 'margin-left', 10 )
 
 		this.nameUI = new UIName( this.container );

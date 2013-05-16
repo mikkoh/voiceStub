@@ -30,6 +30,9 @@ function( $, Parser, UIFactory, UIEntry ) {
 			uiFactory.addCommands( parser.parse( 'create a class named mikko with a function named draw' ) );
 			uiFactory.addCommands( parser.parse( 'add a function named program to mikko with a parameter called language' ) );
 
+			uiFactory.addCommands( parser.parse( 'create a class named teppo with a function named photograph' ) );
+			uiFactory.addCommands( parser.parse( 'add a function named bike to teppo with a parameter called speed' ) );
+
 			var txtField = $( '#txtField' );
 
 			txtField.keyup( function( ev ) {
