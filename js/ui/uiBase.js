@@ -8,6 +8,7 @@ define( function() {
 	UIBase.prototype.nameContainer = null;
 	UIBase.prototype.parentContainer = null;
 	UIBase.prototype.initialized = false;
+	UIBase.prototype.animatedIn = false;
 	UIBase.prototype.numItemsInit = 0;
 	UIBase.prototype.numItemsToInit = 1;
 	UIBase.prototype.onInit = null;

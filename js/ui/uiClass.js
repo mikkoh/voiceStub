@@ -55,6 +55,8 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiClassIcon' ], function( 
 		for( var i = 0, len = this.functions.length; i < len; i++ ) {
 			this.functions[ i ].animateIn( i * 0.5 + 0.5 );
 		}
+
+		this.animatedIn = true;
 	};
 
 	UIClass.prototype.animateOut = function( delay ) {
@@ -71,6 +73,10 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiClassIcon' ], function( 
 			}
 
 			ui.changeContainer( this.functionContainer );
+		}
+
+		if( this.animatedIn ) {
+			ui.animateIn();
 		}
 	};
 

@@ -61,6 +61,8 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 		for( var i = 0, len = this.parameters.length; i < len; i++ ) {
 			this.parameters[ i ].animateIn( delay + 0.5 + i * 0.3 );
 		}
+
+		this.animatedIn = true;
 	};
 
 	UIFunction.prototype.animateOut = function( delay ) {
@@ -77,6 +79,10 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 			}
 
 			ui.changeContainer( this.parameterContainer );
+		}
+
+		if( this.animatedIn ) {
+			ui.animateIn();
 		}
 	};
 

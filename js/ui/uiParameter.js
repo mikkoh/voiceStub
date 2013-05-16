@@ -36,6 +36,8 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'lib/TweenLite' ], function( $
 	UIParameter.prototype.animateIn = function( delay ) {
 		TweenLite.to( this.separator, 0.5, { height: 47, ease: Expo.easeOut, delay: delay });
 		this.nameUI.animateIn( delay + 0.3 );
+
+		this.animatedIn = true;
 	};
 
 	UIParameter.prototype.onNameChange = function( nName, oValue ) {
