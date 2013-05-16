@@ -1,4 +1,4 @@
-define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName' ], function( $, UIBase, UIName ) {
+define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'lib/TweenLite' ], function( $, UIBase, UIName, TweenLite ) {
 	
 	var UIParameter = function( parentContainer ) {
 		this.parentContainer = parentContainer;
@@ -17,16 +17,17 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName' ], function( $, UIBase, UIName 
 
 		this.separator = this.container.find('#separator')
 		.css( 'margin-left', 10 )
+		.css( 'height', 0 );
 
 		this.nameUI = new UIName( this.container );
 		this.nameUI.init( initData );
 		this.nameUI.container.css( 'margin-top', 11 );
 		this.nameUI.container.css( 'margin-left', 10 );
-		this.nameUI.animateIn();
+	};
 
-		// this.onNameClick = this.onNameClick.bind( this );
-		// this.nameContainer = this.container;
-		// this.nameContainer.bind( 'click', this.onNameClick );
+	UIParameter.prototype.animateIn = function( delay ) {
+		TweenLite.to( this.separator, 0.5, { height: 47, ease: Expo.easeOut, delay: delay });
+		this.nameUI.animateIn( delay + 0.3 );
 	};
 
 	UIParameter.prototype.onNameChange = function( nName, oValue ) {

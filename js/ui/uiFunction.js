@@ -8,9 +8,11 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 	UIFunction.prototype.parameterContainer = null;
 	UIFunction.prototype.iconUI = null;
 	UIFunction.prototype.nameUI = null;
+	UIFunction.prototype.parameters = null;
 
 	UIFunction.prototype.init = function( initData, onInit ) {
 		this.name = initData[ 0 ];
+		this.parameters = [];
 
 		this.container = $( '<div class="function"></div>' )
 		.css( 'font-size', 20 )
@@ -51,6 +53,10 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 	UIFunction.prototype.animateIn = function( delay ) {
 		this.nameUI.animateIn( delay );
 		this.iconUI.animateIn( delay );
+
+		for( var i = 0, len = this.parameters.length; i < len; i++ ) {
+			this.parameters[ i ].animateIn( delay + 0.5 + i * 0.3 );
+		}
 	};
 
 	UIFunction.prototype.animateOut = function( delay ) {
@@ -58,6 +64,8 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 	};
 
 	UIFunction.prototype.addItem = function( ui ) {
+		this.parameters.push( ui );
+
 		ui.changeContainer( this.parameterContainer );
 	};
 
