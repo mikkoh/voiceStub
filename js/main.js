@@ -8,8 +8,8 @@ requirejs.config({
 
 
 
-requirejs( [ 'lib/jquery', 'parser/parser', 'ui/uiFactory', 'ui/uiEntry' ], 
-function( $, Parser, UIFactory, UIEntry ) {
+requirejs( [ 'lib/jquery', 'parser/parser', 'ui/uiFactory', 'ui/uiEntry', 'ui/uiCreationBtn', 'model/colours' ], 
+function( $, Parser, UIFactory, UIEntry, UICreationBTN, colours ) {
 	$( function(){
 		if( 'webkitSpeechRecognition' in window) {
 			var container = $( 'body' );
@@ -19,19 +19,19 @@ function( $, Parser, UIFactory, UIEntry ) {
 			var uiFactory = new UIFactory( container );
 
 
-			var classEntry = new UIEntry( container, 'CREATE CLASS' );
-			var functionEntry = new UIEntry( container, 'CREATE FUNCTION' );
-			var parameterEntry = new UIEntry( container, 'ADD PARAMETER' );
+			var classEntry = new UICreationBTN( container, 'CREATE A CLASS', colours.colClass );
+			var functionEntry = new UICreationBTN( container, 'CREATE A FUNCTION', colours.colFunction );
+			var parameterEntry = new UICreationBTN( container, 'ADD A PARAMETER', colours.colParameter );
 
 			classEntry.init();
 			functionEntry.init();
 			parameterEntry.init();
 
-			uiFactory.addCommands( parser.parse( 'create a class named mikko with a function named draw' ) );
-			uiFactory.addCommands( parser.parse( 'add a function named program to mikko with a parameter called language' ) );
+			// uiFactory.addCommands( parser.parse( 'create a class named mikko with a function named draw' ) );
+			// uiFactory.addCommands( parser.parse( 'add a function named program to mikko with a parameter called language' ) );
 
-			uiFactory.addCommands( parser.parse( 'create a class named teppo with a function named photograph' ) );
-			uiFactory.addCommands( parser.parse( 'add a function named bike to teppo with a parameter called speed' ) );
+			// uiFactory.addCommands( parser.parse( 'create a class named teppo with a function named photograph' ) );
+			// uiFactory.addCommands( parser.parse( 'add a function named bike to teppo with a parameter called speed' ) );
 
 			var txtField = $( '#txtField' );
 
