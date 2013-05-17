@@ -8,8 +8,8 @@ requirejs.config({
 
 
 
-requirejs( [ 'lib/jquery', 'parser/parser', 'ui/uiFactory', 'ui/uiEntry', 'ui/uiCreationBtn', 'model/colours' ], 
-function( $, Parser, UIFactory, UIEntry, UICreationBTN, colours ) {
+requirejs( [ 'lib/jquery', 'parser/parser', 'ui/uiFactory', 'ui/uiCreationBtn', 'model/colours' ], 
+function( $, Parser, UIFactory, UICreationBTN, colours ) {
 	$( function(){
 		if( 'webkitSpeechRecognition' in window) {
 			var container = $( 'body' );
