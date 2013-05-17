@@ -32,6 +32,19 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview ) {
 			var functionEntry = new UICreationBTN( container, 'CREATE A FUNCTION', colours.colFunction );
 			var parameterEntry = new UICreationBTN( container, 'ADD A PARAMETER', colours.colParameter );
 
+
+			var debugText = $( '#debugTextField' );
+			debugText.bind( 'keyup', function( ev ) {
+				finalRecording = debugText.val();
+
+				if( ev.which != 13 ) {
+					parseTextField();
+				} else {
+					endParseTextField();
+					debugText.val( '' );
+				}
+			});
+
 			recordingPreview.init();
 			classEntry.init();
 			functionEntry.init();
@@ -141,8 +154,12 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview ) {
 				document.getElementById( 'btnStart' ).innerHTML =  'STOP'; 
 			}
 
+			var lastTime = Date.now();
 			recog.onresult = function( ev ) { 
 				var results = ev.results;
+
+				console.log( Date.now() - lastTime );
+				lastTime = Date.now();
 
 				finalRecording = '';
 				interimRecording = '';
