@@ -39,6 +39,7 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview ) {
 
 
 			var classFunctionContainer = $( '<div id="classFunctionContainer"></div>' )
+			.css( 'transform', 'scale(50%)')
 			.appendTo( container );
 
 			var scrollFade = $( '<div id="scrollFade"></div>' )

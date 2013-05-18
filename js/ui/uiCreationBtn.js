@@ -16,28 +16,28 @@ define( [ 'lib/jquery', 'model/colours', 'lib/TweenLite' ], function( $, colours
 	UICreationBTN.prototype.colour = colours.colClass;
 	UICreationBTN.prototype.copyContainer = null;
 	UICreationBTN.prototype.bgSelected = null;
-	UICreationBTN.prototype.bgUnselected = null;
 	UICreationBTN.prototype.input = null;
+	UICreationBTN.prototype.inputBG = null;
 
 	UICreationBTN.prototype.init = function() {
 		this.container = $( '<div>' +
 								'<div id="button">' +
 								 	'<div id="copy">' + this.copy + '</div>' +
-									'<img id="selected" src="images/creationBGSelected.png" width="254" height="93" />' +
-									'<img id="unselected" src="images/creationBG.png" width="213" height="47" />' +
+									'<img id="selected" src="images/creationBGSelected.png" width="237" height="74" />' +
 							    '</div>' +
 							    '<div id="input"></div>' +
+							    '<img id="inputBG" src="images/creationEntryBG.png" width="365" height="25" />' +
 							'</div>').appendTo( this.parentContainer );
-
 		this.btn = this.container.find( '#button' );
 		this.copyContainer = this.container.find( '#copy' );
-		this.bgUnselected = this.container.find( '#unselected' );
 		this.bgSelected = this.container.find( '#selected' );
 		this.input = this.container.find( '#input' );
+		this.inputBG = this.container.find( '#inputBG' );
 
 		this.container
 		.css( 'margin-bottom', 10 )
-		.css( 'margin-top', 10 );
+		.css( 'margin-top', 10 )
+		.css( 'position', 'relative' );
 
 		this.btn
 		.css( 'color', this.colour )
@@ -48,36 +48,34 @@ define( [ 'lib/jquery', 'model/colours', 'lib/TweenLite' ], function( $, colours
 		.css( 'position', 'relative' );
 
 		this.copyContainer
-		.css( 'width', 254 )
-		.css( 'height', 93 )
 		.css( 'padding', 14 );
 
-		this.bgUnselected
-		.css( 'top', 0 )
-		.css( 'position', 'absolute' );
-
 		this.bgSelected
-		.css( 'top', -10 )
-		.css( 'left', -10 )
+		.css( 'position', 'absolute' )
+		.css( 'top', -15 )
+		.css( 'left', -12 )
 		.css( 'visibility', 'hidden' )
-		.css( 'opacity', 0 )
-		.css( 'position', 'absolute' );
+		.css( 'opacity', 0 );
 
 		this.input
 		.css( 'color', this.colour )
 		.css( 'font-size', 30 )
 		.css( 'overflow', 'hidden' )
+		.css( 'padding-left', 10 )
 		.css( 'display', 'inline-block');
+
+		this.inputBG
+		.css( 'position', 'absolute' )
+		.css( 'top', 20 )
+		.css( 'left', 214);
 	};
 
 	UICreationBTN.prototype.activate = function() {
 		TweenLite.to( this.bgSelected, 0.5, { autoAlpha: 1} );
-		TweenLite.to( this.bgUnselected, 0.5, { autoAlpha: 0} );
 	};
 
 	UICreationBTN.prototype.deActivate = function() {
 		TweenLite.to( this.bgSelected, 0.5, { autoAlpha: 0} );
-		TweenLite.to( this.bgUnselected, 0.5, { autoAlpha: 1} );
 	};
 
 	UICreationBTN.prototype.setValue = function( value ) {
