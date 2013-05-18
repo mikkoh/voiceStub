@@ -24,13 +24,39 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview ) {
 			console.log( recog );
 
 			var parser = new Parser();
-			var uiFactory = new UIFactory( container );
-
-
+			
 			var recordingPreview = new UIRecordPreview( container );
 			var classEntry = new UICreationBTN( container, 'CREATE A CLASS', colours.colClass );
 			var functionEntry = new UICreationBTN( container, 'CREATE A FUNCTION', colours.colFunction );
 			var parameterEntry = new UICreationBTN( container, 'ADD A PARAMETER', colours.colParameter );
+
+			recordingPreview.init();
+			classEntry.init();
+			functionEntry.init();
+			parameterEntry.init();
+
+
+
+
+			var classFunctionContainer = $( '<div id="classFunctionContainer"></div>' )
+			.appendTo( container );
+
+			var scrollFade = $( '<div id="scrollFade"></div>' )
+			.css( 'position', 'absolute' )
+			.css( 'background-image', 'url(images/scrollFade.png)' )
+			.css( 'height', 30 )
+			.css( 'top', classFunctionContainer.offset().top )
+			.css( 'width', '100%' )
+			.appendTo( container );
+
+			classFunctionContainer
+			.css( 'overflow', 'scroll' )
+			.css( 'padding-top', 10 )
+			.css( 'height', $( window ).height() - classFunctionContainer.offset().top );
+
+			console.log( classFunctionContainer[0] );
+
+			var uiFactory = new UIFactory( classFunctionContainer );
 
 
 			var debugText = $( '#debugTextField' );
@@ -38,23 +64,23 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview ) {
 				finalRecording = debugText.val();
 
 				if( ev.which != 13 ) {
+					recordingPreview.setFinal( '' );
+					recordingPreview.setInterim( finalRecording );
 					parseTextField();
 				} else {
+					recordingPreview.setInterim( '' );
+					recordingPreview.setFinal( finalRecording );
 					endParseTextField();
 					debugText.val( '' );
 				}
 			});
 
-			recordingPreview.init();
-			classEntry.init();
-			functionEntry.init();
-			parameterEntry.init();
 
-			// uiFactory.addCommands( parser.parse( 'create a class named mikko with a function named draw' ) );
-			// uiFactory.addCommands( parser.parse( 'add a function named program to mikko with a parameter called language' ) );
+			onResize();
+			$( window ).resize( onResize );
 
-			// uiFactory.addCommands( parser.parse( 'create a class named teppo with a function named photograph' ) );
-			// uiFactory.addCommands( parser.parse( 'add a function named bike to teppo with a parameter called speed' ) );
+
+
 			function endParseTextField() {
 				classEntry.deActivate();
 				classEntry.setValue('');
@@ -116,37 +142,12 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview ) {
 				}				
 			}
 			
-			console.log( chrome );
-			var searchBox = chrome.searchBox;
-				searchBox.onchange = function() {
-				  if (this.selectionStart == this.selectionEnd &&
-				      this.selectionStart == this.value.length)
-				    alert('Cursor is at end of input');
+			function onResize() {
+				classFunctionContainer
+				.css( 'height', $( window ).height() - classFunctionContainer.offset().top );
 
-				  alert('Setting suggestions for: ' + this.value);
-				  this.setSuggestions({
-				    suggestions: [
-				      { value: "one"
-				      },
-				      { value: "two"
-				      }
-				    ]
-				  });
-				}
-				searchBox.onsubmit = function() {
-				  alert('User searched for: ' + this.value);
-				}
-				searchBox.oncancel = function() {
-				  alert('Query when user cancelled: ' + this.value);
-				}
-				searchBox.onresize = function() {
-				  alert('Resized to: ' +
-				        [this.x,
-				         this.y,
-				         this.width,
-				         this.height].join(','));
-				}
-
+				console.log( $(window).height(), classFunctionContainer.height() );
+			}
 
 			recog.onstart = function() { 
 				recording = true;

@@ -3,4 +3,5 @@ body {
 	font-family: 'Montserrat', sans-serif;
 	background-color: #bbb8b3;
 	color: #262626;
+	overflow: hidden;
 }
