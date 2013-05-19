@@ -8,8 +8,8 @@ requirejs.config({
 
 
 
-requirejs( [ 'lib/jquery', 'parser/parser', 'ui/uiFactory', 'ui/uiCreationBtn', 'model/colours', 'ui/uiRecordPreview' ], 
-function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview ) {
+requirejs( [ 'lib/jquery', 'parser/parser', 'ui/uiFactory', 'ui/uiCreationBtn', 'model/colours', 'ui/uiRecordPreview', 'ui/uiRecordEntry' ], 
+function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecordEntry ) {
 	$( function(){
 		if( 'webkitSpeechRecognition' in window) {
 			var container = $( 'body' );
@@ -25,11 +25,13 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview ) {
 
 			var parser = new Parser();
 			
+			var recordEntry = new UIRecordEntry( container );
 			var recordingPreview = new UIRecordPreview( container );
 			var classEntry = new UICreationBTN( container, 'CREATE A CLASS', colours.colClass );
 			var functionEntry = new UICreationBTN( container, 'CREATE A FUNCTION', colours.colFunction );
 			var parameterEntry = new UICreationBTN( container, 'ADD A PARAMETER', colours.colParameter );
 
+			recordEntry.init();
 			recordingPreview.init();
 			classEntry.init();
 			functionEntry.init();
