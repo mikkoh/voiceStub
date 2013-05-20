@@ -46,6 +46,8 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 
 					curItem = this.factory.getFunction( command[ i ].parameters[ 0 ], classToActOn );
 
+					console.log( '---->', curItem, classToActOn );
+
 					if( curItem === null ) {
 						curItem = new UIFunction( this.factory.container, command[ i ].parameters );	
 						
@@ -277,18 +279,17 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 		}
 	};
 
-	UIFactory.prototype.getFunction = function( item ) {
-		var rVal = this._getItemInArr( item, this.functions );
+	UIFactory.prototype.getFunction = function( item, parentClass ) {
+		var rVal = null;
+		var curFunctionArr = null;
 
-		if( rVal === null ) {
-			for( var i in this.functionsForClass ) {
-				rVal = this._getItemInArr( item, this.functionsForClass[ i ] );
-				
-				if( rVal !== null ) {
-					break;
-				}
-			}
+		if( parentClass && this.functionsForClass[ parentClass.name ] !== undefined ) {
+			curFunctionArr = this.functionsForClass[ parentClass.name ];
+		} else {
+			curFunctionArr = this.functions;
 		}
+
+		rVal = this._getItemInArr( item, curFunctionArr );
 
 		return rVal;
 	};
