@@ -32,10 +32,11 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 						var nClass = curItem = new UIClass( this.factory.container, command[ i ].parameters );
 
 						this.factory.addClass( curItem );
+
+						newTopLevelItems.push( nClass );
 					}
 
 					classToActOn = curItem;
-					newTopLevelItems.push( nClass );
 				break;
 
 				case 'createFunction':
@@ -52,14 +53,12 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 
 						if( classToActOn !== null ) {
 							classToActOn.addItem( curItem );
+						} else {
+							newTopLevelItems.push( curItem );
 						}
 					}
 
 					functionToActOn = curItem;
-
-					if( !classToActOn ) {
-						newTopLevelItems.push( curItem );
-					}
 				break;
 
 				case 'addParameter':
