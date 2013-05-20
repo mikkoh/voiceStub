@@ -5,3 +5,7 @@ body {
 	color: #7a7775;
 	overflow: hidden;
 }
+
+#entryLine:focus {
+	outline: none;
+};

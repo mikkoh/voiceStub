@@ -26,16 +26,38 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 			var parser = new Parser();
 			
 			var recordEntry = new UIRecordEntry( container );
-			var recordingPreview = new UIRecordPreview( container );
 			var classEntry = new UICreationBTN( container, 'CREATE A CLASS', colours.colClass );
 			var functionEntry = new UICreationBTN( container, 'CREATE A FUNCTION', colours.colFunction );
 			var parameterEntry = new UICreationBTN( container, 'ADD A PARAMETER', colours.colParameter );
+			var recording = false;
+
+			recordEntry.onRecordPress = function() {
+				if( !recording ) {
+					recog.lang = 'en-US';
+					recog.start();
+				} else {
+					recog.stop();
+				}
+			};
+
+			recordEntry.onMessageChange = function( msg ) {
+				finalRecording = msg;
+
+				parseTextField();
+			};
+
+			recordEntry.onRecordEnd = function( msg ) {
+				finalRecording = msg;
+
+				endParseTextField();
+			};
+
 
 			recordEntry.init();
-			recordingPreview.init();
 			classEntry.init();
 			functionEntry.init();
 			parameterEntry.init();
+
 
 
 
@@ -62,22 +84,6 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 			var uiFactory = new UIFactory( classFunctionContainer );
 
 
-			var debugText = $( '#debugTextField' );
-			debugText.bind( 'keyup', function( ev ) {
-				finalRecording = debugText.val();
-
-				if( ev.which != 13 ) {
-					recordingPreview.setFinal( '' );
-					recordingPreview.setInterim( finalRecording );
-					parseTextField();
-				} else {
-					recordingPreview.setInterim( '' );
-					recordingPreview.setFinal( finalRecording );
-					endParseTextField();
-					debugText.val( '' );
-				}
-			});
-
 
 			onResize();
 			$( window ).resize( onResize );
@@ -92,7 +98,6 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 				parameterEntry.deActivate();
 				parameterEntry.setValue('');
 
-				recordingPreview.clear();
 				uiFactory.addCommands( parser.parse( finalRecording ) );
 			}
 
@@ -155,15 +160,11 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 			recog.onstart = function() { 
 				recording = true;
 				finalRecording = '';
-				document.getElementById( 'btnStart' ).innerHTML =  'STOP'; 
+				recordEntry.startRecord();
 			}
 
-			var lastTime = Date.now();
 			recog.onresult = function( ev ) { 
 				var results = ev.results;
-
-				console.log( Date.now() - lastTime );
-				lastTime = Date.now();
 
 				finalRecording = '';
 				interimRecording = '';
@@ -176,9 +177,11 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 					}
 				}
 
-				console.log( finalRecording );
-				recordingPreview.setInterim( interimRecording );
-				recordingPreview.setFinal( finalRecording );
+				if( finalRecording != '' ) {
+					recordEntry.setValue( finalRecording )
+				} else {
+					recordEntry.setValue( interimRecording )
+				}
 
 				parseTextField();
 			}
@@ -187,12 +190,13 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 				console.log( 'ERROR', ev );
 
 				recording = false;
-				document.getElementById( 'btnStart' ).innerHTML =  'START'; 
+				recordEntry.stopRecord();
+				recordEntry.setError( ev );
 			}
 
 			recog.onend = function() { 
 				recording = false;
-				document.getElementById( 'btnStart' ).innerHTML =  'START'; 
+				recordEntry.stopRecord();
 
 				endParseTextField();
 			}
@@ -204,16 +208,6 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 			recog.onspeechend = function() {
 				console.log( 'sound end' );
 			};
-
-			var recording = false;
-			document.getElementById( 'btnStart' ).onclick = function() {
-				if( !recording ) {
-					recog.lang = 'en-US';
-					recog.start();
-				} else {
-					recog.stop();
-				}
-			}
 		}
 	});
 });

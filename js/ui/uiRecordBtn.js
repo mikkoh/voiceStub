@@ -1,10 +1,13 @@
-define( [ 'lib/jquery' ], function( $ ) {
+define( [ 'lib/jquery', 'lib/TweenLite' ], function( $, TweenLite ) {
+	console.log( window );
+
 	var UIRecordBtn = function( container ) {
 		this.parentContainer = container;
 	};
 
 	UIRecordBtn.prototype.parentContainer = null;
 	UIRecordBtn.prototype.container = null;
+	UIRecordBtn.prototype.isRecording = false;
 
 	UIRecordBtn.prototype.init = function() {
 		this.container = $( '<div>' +
@@ -31,6 +34,28 @@ define( [ 'lib/jquery' ], function( $ ) {
 		.css( 'visibility', 'hidden' )
 		.css( 'opacity', 0 )
 		.css( 'position', 'absolute' );
+	};
+
+	UIRecordBtn.prototype.startRecord = function() {
+		this.isRecording = true;
+
+		TweenLite.to( this.imgNotRecording, 0.3, { autoAlpha: 0 } );
+		TweenLite.to( this.imgRecording, 0.3, { autoAlpha: 1 } );
+	};
+
+	UIRecordBtn.prototype.stopRecord = function() {
+		this.isRecording = false;
+
+		TweenLite.to( this.imgNotRecording, 0.3, { autoAlpha: 1 } );
+		TweenLite.to( this.imgRecording, 0.3, { autoAlpha: 0 } );
+	};
+
+	UIRecordBtn.prototype._onClick = function() {
+		if( this.isRecording ) {
+			this.stopRecord();
+		} else {
+			this.startRecord();
+		}
 	};
 
 	return UIRecordBtn;
