@@ -1,6 +1,7 @@
 define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'lib/TweenLite' ], function( $, UIBase, UIName, TweenLite ) {
 	
 	var UIParameter = function( parentContainer, initData ) {
+		this.name = initData[ 0 ];
 		this.parentContainer = parentContainer;
 		this.initData = initData;
 	}
@@ -10,7 +11,6 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'lib/TweenLite' ], function( $
 	UIParameter.prototype.separator = null;
 
 	UIParameter.prototype.init = function( onInit ) {
-		this.name = this.initData[ 0 ];
 		this.onInit = onInit;
 
 		this.container = $( '<div class="parameter"><img id="separator" src="images/parameterSeparator.png" width="7" height="47" /></div>' )

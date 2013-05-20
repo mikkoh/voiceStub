@@ -46,8 +46,6 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 
 					curItem = this.factory.getFunction( command[ i ].parameters[ 0 ], classToActOn );
 
-					console.log( '---->', curItem, classToActOn );
-
 					if( curItem === null ) {
 						curItem = new UIFunction( this.factory.container, command[ i ].parameters );	
 						

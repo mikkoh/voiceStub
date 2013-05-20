@@ -1,6 +1,4 @@
 define( [ 'lib/jquery', 'lib/TweenLite' ], function( $, TweenLite ) {
-	console.log( window );
-
 	var UIRecordBtn = function( container ) {
 		this.parentContainer = container;
 	};

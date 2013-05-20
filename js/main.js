@@ -21,8 +21,6 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 			recog.continuous = true;
 			recog.interimResults = true;
 
-			console.log( recog );
-
 			var parser = new Parser();
 			
 			var recordEntry = new UIRecordEntry( container );
@@ -78,8 +76,6 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 			.css( 'overflow', 'scroll' )
 			.css( 'padding-top', 10 )
 			.css( 'height', $( window ).height() - classFunctionContainer.offset().top );
-
-			console.log( classFunctionContainer[0] );
 
 			var uiFactory = new UIFactory( classFunctionContainer );
 
@@ -153,8 +149,6 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 			function onResize() {
 				classFunctionContainer
 				.css( 'height', $( window ).height() - classFunctionContainer.offset().top );
-
-				console.log( $(window).height(), classFunctionContainer.height() );
 			}
 
 			recog.onstart = function() { 
@@ -187,8 +181,6 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 			}
 
 			recog.onerror = function( ev ) { 
-				console.log( 'ERROR', ev );
-
 				recording = false;
 				recordEntry.stopRecord();
 				recordEntry.setError( ev );

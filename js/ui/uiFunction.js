@@ -1,6 +1,7 @@
 define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], function( $, UIBase, UIName, UIIcon ) {
 	
 	var UIFunction = function( parentContainer, initData ) {
+		this.name = initData[ 0 ];
 		this.parentContainer = parentContainer;
 		this.parameters = [];
 		this.initData = initData;
@@ -13,7 +14,6 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 	UIFunction.prototype.parameters = null;
 
 	UIFunction.prototype.init = function( onInit ) {
-		this.name = this.initData[ 0 ];
 		this.onInit = onInit;
 		
 		this.container = $( '<div class="function"></div>' )
