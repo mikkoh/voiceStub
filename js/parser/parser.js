@@ -1,366 +1,262 @@
 define( function() {
-	var Dictionary = {
-		ignore: [
-			{ value: 'a' },
-			{ value: 'an' }
-		],
-
-
-		nouns: [
-			{ 
-				value: 'class',
-				verbs: [
-					{ value: 'add', func: 'createClass' },
-					{ value: 'create', func: 'createClass' },
-					{ value: 'subtract', func: 'deleteClass' },
-					{ value: 'delete', func: 'deleteClass' },
-					{ value: 'remove', func: 'deleteClass' }
-				],
-				defaultFunc: 'createClass'
-			},
-			
-			{ 
-				value: 'function',
-				verbs: [
-					{ value: 'add', func: 'createFunction' },
-					{ value: 'create', func: 'createFunction' },
-					{ value: 'subtract', func: 'deleteFunction' },
-					{ value: 'delete', func: 'deleteFunction' },
-					{ value: 'remove', func: 'deleteFunction' }
-				],
-				defaultFunc: 'createFunction'
-			},
-
-			{ 
-				value: 'parameter',
-				verbs: [
-					{ value: 'add', func: 'addParameter' },
-					{ value: 'create', func: 'addParameter' },
-					{ value: 'subtract', func: 'deleteParameter' },
-					{ value: 'delete', func: 'deleteParameter' },
-					{ value: 'remove', func: 'deleteParameter' }
-				],
-				defaultFunc: 'addParameter'
-			}
-		],
-
-		addedNouns: [ ],
-
-		verbs: [
-			{ value: 'add' },
-			{ value: 'create' }
-		],
-
-		prepositions: [
-			{ value: 'to' },
-			{ value: 'on' },
-			{ value: 'from' }
-		],
-
-		addNoun: function( noun, extendNoun ) {
-			var nNounObj = {};
-
-			for( var i in extendNoun ) {
-				nNounObj[ i ] = extendNoun[ i ];
-			}
-
-			nNounObj.extendedNoun = extendNoun.value;
-			nNounObj.value = noun.toLowerCase();
-
-			Dictionary.addedNouns.push( nNounObj );
-		}
+	
+	var Parser = function() { 
+		this.separators = [];
+		this.separatorLookUp = {};
+		this.verbs = [];
+		this.verbLookUp = {};
+		this.prepositions = [];
+		this.prepositionLookUp = {};
+		this.nouns = [];
+		this.nounLookUp = {};
+		this.verbsForNouns = {};
+		this.learningKeyWords = [];
+		this.learningKeyWordLookUp = {};
 	};
 
-
-	function Parser() {}
-
-	Parser.prototype.parse = function( value ) {
-		var rVal = [];
-
-		var speechArr = value.split( ' ' );
-		var scrubbedArr = speechArr.concat();
-		var splitScrubbed = [];
-
-		//clean up this array of junk
-		for( var i = scrubbedArr.length - 1; i >= 0; i-- ) {
-			for( var j = 0; j < Dictionary.ignore.length; j++ ) {
-				if( scrubbedArr[ i ] == '' || this.isIgnore( scrubbedArr[ i ] ) != -1 ) {
-					scrubbedArr.splice( i, 1 );
-				}
-			}
-		}
+	Parser.prototype.separators = null;
+	Parser.prototype.separatorLookUp = null;
+	Parser.prototype.verbs = null;
+	Parser.prototype.verbLookUp = null;
+	Parser.prototype.prepositions = null;
+	Parser.prototype.prepositionLookUp = null;
+	Parser.prototype.nouns = null;
+	Parser.prototype.nounLookUp = null;
+	Parser.prototype.verbsForNouns = null;
+	Parser.prototype.learningKeyWords = null;
+	Parser.prototype.learningKeyWordLookUp = null;
 
 
-		//split the command by the word with
-		var splitStart = 0;
-		for( var i = 0; i < scrubbedArr.length - 1; i++ ) {
-
-			//with a function called X
-			//and add a function called X
-			if( scrubbedArr[ i ] == 'with' || ( scrubbedArr[ i ] == 'and' && 
-												this.isVerb( scrubbedArr[ i + 1 ] ) != -1 && 
-												this.isNoun( scrubbedArr[ i + 2 ] ) != -1 )) {
-
-				splitScrubbed[ splitScrubbed.length ] = scrubbedArr.slice( splitStart, i );
-				splitStart = i + 1;
-			}
-		}
-
-		//add in the final bit to split scrubbed
-		splitScrubbed[ splitScrubbed.length ] = scrubbedArr.slice( splitStart, i + 1 );
-
-
-
-		//now parse out each bit
-		for( var i = 0; i < splitScrubbed.length; i++ ) {
-			rVal.push( this.parseScrubbed( splitScrubbed[ i ] ) );
-		}
-
-
-		return rVal;	
+	Parser.prototype.addSeparator = function( word ) {
+		this.separators.push( word );
+		this.separatorLookUp[ word ] = true;
 	};
 
-	Parser.prototype.parseScrubbed = function( scrubbedArr ) {
-		var rValItem = {};
-		var nounIndices = [];
-		var keyNounIsAdded = false;
-
-		//actOn is going to be what this command should act on
-		rValItem.actOn = null;
-
-		//find what we want to apply this function to look for prepositions (on, to)
-		//if we find one we we want to delete the preposition and the noun so the rest can
-		//take precedence
-		for( var i = 0; i < scrubbedArr.length; i++ ) {
-			if( this.isPreposition( scrubbedArr[ i ] ) != -1 ) {
-				//now that we found a preposition we want to find a noun what to add to
-				//note the nouns dictionary should grow as this program is used
-				if( this.isNoun( scrubbedArr[ i + 1 ] ) != -1 &&  
-					( scrubbedArr[ i + 2 ] == 'called' || scrubbedArr[ i + 2 ] == 'named' )) {
-
-					var combinedWord = '';
-					for( var j = i + 3; j < scrubbedArr.length; j++ ) {
-						combinedWord += scrubbedArr[ j ];
-
-						if( this.isAddedNoun( combinedWord ) != -1 ) {
-							//now we need to add up all remaining words to check if its an added noun
-							rValItem.actOn = combinedWord;
-							scrubbedArr.splice( i, ( j + 1 ) - i );
-
-							break;
-						}
-					}
-				} else {
-					var combinedWord = '';
-
-					for( var j = i + 1; j < scrubbedArr.length; j++ ) {
-						combinedWord += scrubbedArr[ j ];
-
-						if( this.isAddedNoun( combinedWord ) != -1 ) {
-							//now we need to add up all remaining words to check if its an added noun
-							rValItem.actOn = combinedWord;
-							scrubbedArr.splice( i, ( j + 1 ) - i );
-
-							break;
-						}
-					}
-				}
-			}
-		}
-
-
-
-		//now find the indices of the nouns
-		for( var i = 0; i < scrubbedArr.length; i++ ) {
-			for( var j = 0; j < Dictionary.nouns.length; j++ ) {
-				var idx = -1;
-
-				if( ( idx = this.isNoun( scrubbedArr[ i ] ) ) != -1 ) {
-					nounIndices.push( { wordIDX: i, dictionaryIDX: idx } );
-				} else if( ( idx = this.isAddedNoun( scrubbedArr[ i ]) ) != -1 ) {
-					nounIndices.push( { wordIDX: i, dictionaryIDX: idx, isAdded: true } );
-
-					if( nounIndices.length == 1 ) {
-						keyNounIsAdded = true;
-					}
-				}	
-			}
-		}
-
-
-		//figure out major action or key noun
-		if( nounIndices.length > 0 ) {
-
-			var nounIdx = nounIndices[ 0 ].dictionaryIDX;
-			var followingWordIDX = nounIndices[ 0 ].wordIDX + 1;
-			var followingWord = scrubbedArr[ followingWordIDX ];
-			var precedingWordOff = 1;
-
-			//because a noun such as cat can have 'the' in front we need to add one to the preceding word idx
-			//if the word in front of the noun is the eg. delete the class named cat
-			if( scrubbedArr[ nounIndices[ 0 ].wordIDX - precedingWordOff ] == 'the' ) {
-				precedingWordOff++;
-			}
-
-
-			//check if there is a preceding verb such as create, add, subtract, delete
-			if( nounIndices[ 0 ].wordIDX > 0 ) {
-				var precedingWordIDX = nounIndices[ 0 ].wordIDX - precedingWordOff;
-				var precedingWord = scrubbedArr[ precedingWordIDX ];
-
-				if( !nounIndices[ 0 ].isAdded ) {
-					var verbIDX = this.isVerbForNoun( precedingWord, nounIndices[ 0 ].dictionaryIDX );
-
-					rValItem.func = Dictionary.nouns[ nounIdx ].verbs[ verbIDX ].func;
-				} else {
-					var verbIDX = this.isVerbForAddedNoun( precedingWord, nounIndices[ 0 ].dictionaryIDX );
-
-					rValItem.func = Dictionary.addedNouns[ nounIdx ].verbs[ verbIDX ].func;
-				}
-			} else {
-
-				//since the first word is the key noun we'll use the defaultFunc for this key noun
-				rValItem.func = Dictionary.nouns[ nounIdx ].defaultFunc;
-			}
-
-
-			//we know what to do for this key noun
-			if( rValItem.func ) {
-				//check if the keynoun is followed by named in which case we'll need to find out the name of the new item we'll be
-				//acting on
-				if( followingWord == 'named' || followingWord == 'name' || followingWord == 'called' || followingWord == 'call' ) {
-					for( var i = followingWordIDX + 1; i < scrubbedArr.length; i++ ) {
-						if( rValItem.parameters == null ) {
-							rValItem.parameters = [];
-							rValItem.parameters[ 0 ] = scrubbedArr[ i ];
-						} else {
-							rValItem.parameters[ 0 ] +=	scrubbedArr[ i ].charAt( 0 ).toUpperCase() + scrubbedArr[ i ].substr( 1 );
-						}
-					}
-
-					if( rValItem.parameters == null ) {
-						rValItem.error = 'no parameters for function';
-						rValItem.parsed = false;	
-					} else {
-						//because we got something we want to add it to the nouns list
-						Dictionary.addNoun( rValItem.parameters[ 0 ], Dictionary.nouns[ nounIdx ] );
-					}
-				//check if the keynoun is an added noun
-				} else if( this.isAddedNoun( scrubbedArr[ nounIndices[ 0 ].wordIDX ] ) != -1 ) {
-						rValItem.parameters = [];
-						rValItem.parameters[ 0 ] = scrubbedArr[ nounIndices[ 0 ].wordIDX ];
-				} else {	
-					rValItem.error = 'no name for key noun for creation';
-					rValItem.parsed = false;
-				}
-
-			} else {
-				rValItem.error = 'not parsed because perceding word to key noun was not a verb or we have no function for that key noun';
-				rValItem.parsed = false;
-			}
-		} else {
-			rValItem.error = 'not parsed since we have no key nouns';
-			rValItem.parsed = false;
-		}
-
-
-
-		return rValItem;
+	Parser.prototype.isSeparator = function( word ) {
+		return this.separatorLookUp[ word ];
 	};
 
-	Parser.prototype.isIgnore = function( word ) {
-		var foundIdx = -1;
+	Parser.prototype.addVerbForNouns = function( word ) {
+		this.verbs.push( word );
+		this.verbLookUp[ word ] = true;
 
-		for( var j = 0; j < Dictionary.ignore.length; j++ ) {
-			if( word == Dictionary.ignore[ j ].value ) {
-				foundIdx = j;
-				break;
+		for( var i = 1, len = arguments.length; i < len; i++ ) {
+			var noun = arguments[ i ];
+
+			if( this.verbsForNouns[ noun ] === undefined ) {
+				this.verbsForNouns[ noun ] = [];
 			}
+
+			this.verbsForNouns[ noun ].push( word );
 		}
-
-		return foundIdx;
-	};
-
-	Parser.prototype.isNoun = function( word ) {
-		var foundIdx = -1;
-
-		for( var j = 0; j < Dictionary.nouns.length; j++ ) {
-			if( word == Dictionary.nouns[ j ].value ) {
-				foundIdx = j;
-				break;
-			}
-		}
-
-		return foundIdx;
-	};
-
-	Parser.prototype.isAddedNoun = function( word ) {
-		var foundIdx = -1;
-
-		for( var j = 0; j < Dictionary.addedNouns.length; j++ ) {
-			if( word == Dictionary.addedNouns[ j ].value ) {
-				foundIdx = j;
-				break;
-			}
-		}
-
-		return foundIdx;
 	};
 
 	Parser.prototype.isVerb = function( word ) {
-		var foundIdx = -1;
+		return this.verbLookUp[ word ];
+	};
 
-		for( var j = 0; j < Dictionary.verbs.length; j++ ) {
-			if( word == Dictionary.verbs[ j ].value ) {
-				foundIdx = j;
-				break;
-			}
-		}
-
-		return foundIdx;
+	Parser.prototype.addPreposition = function( word ) {
+		this.prepositions.push( word );
+		this.prepositionLookUp[ word ] = true;
 	};
 
 	Parser.prototype.isPreposition = function( word ) {
-		var foundIdx = -1;
+		return this.prepositionLookUp[ word ];
+	};
 
-		for( var j = 0; j < Dictionary.prepositions.length; j++ ) {
-			if( word == Dictionary.prepositions[ j ].value ) {
-				foundIdx = j;
-				break;
+	Parser.prototype.addNoun = function( word, baseNoun ) {
+		this.nouns.push( word );
+		this.nounLookUp[ word ] = true;
+
+		if( baseNoun !== undefined ) {
+			if( this.verbsForNouns[ baseNoun ] === undefined ) {
+				throw new Error( 'Base noun is not defined previously or no verbs have been defined for it' );
+			}
+
+			this.verbsForNouns[ word ] = this.verbsForNouns[ baseNoun ];
+		}
+	};
+
+	Parser.prototype.isNoun = function( word ) {
+		return this.nounLookUp[ word ];
+	};
+
+	Parser.prototype.addLearningKeyword = function( word ) {
+		this.learningKeyWords.push( word );
+		this.learningKeyWordLookUp[ word ] = true;
+	};
+
+	Parser.prototype.isLearningKeyword = function( word ) {
+		return this.learningKeyWordLookUp[ word ];
+	}
+
+
+	Parser.prototype.parse = function( statement, allowLearning ) {
+		if( allowLearning === undefined ) {
+			allowLearning = true;
+		}
+
+		var separated = this.separateStatement( statement );
+		var parsedCommands = [];
+
+		for( var i = 0, len = separated.length; i < len; i++ ) {
+			var parsedData = {};
+
+			this.parseOutFirstVerb( separated[ i ], parsedData );
+			this.parseOutPrepositionAndNoun( separated[ i ], parsedData );
+			this.parseOutKeyNouns( separated[ i ], parsedData );
+			this.parseOutAndLearnNouns( separated[ i ], parsedData );
+
+			parsedCommands.push( parsedData );
+		}
+
+		return parsedCommands;
+	};
+
+
+	/*
+	The following are steps to parse out statements
+
+	1) statement separators
+	2) verbs
+	3) preposition
+	4) key nouns
+	5) learned nouns
+	*/
+	Parser.prototype.separateStatement = function( statement, parsedData ) {
+		for( var i = 0, len = this.separators.length; i < len; i++ ) {
+			statement.split( this.separators[ i ] ).join( '||' );
+		}
+
+		return statement.split( '||' );
+	};
+
+	Parser.prototype.parseOutFirstVerb = function( statement, parsedData ) {
+		var idx = statement.length;
+		var word = null;
+		parsedData.verb = null;
+
+		for( var i = 0, len = this.verbs.length; i < len; i++ ) { 
+			var curIdx = statement.indexOf( this.verbs[ i ] );
+
+			//if we found a verb we want to check if this verb is
+			//earlier in the sentence we do this because
+			if( curIdx > -1 && i < idx ) {
+				word = this.verbs[ i ];
+				idx = i;
 			}
 		}
 
-		return foundIdx;
+		if( word !== null ) {
+			statement = this.removeAtIdx( statement, idx, word );
+
+			parsedData.verb = word;
+		}
+
+		return statement;
 	};
 
-	Parser.prototype.isVerbForNoun = function( possibleVerb, nounDictionaryIDX ) {
-		var verbs = Dictionary.nouns[ nounDictionaryIDX ].verbs;
-		var foundIdx = -1;
+	Parser.prototype.parseOutPrepositionAndNoun = function( statement, parsedData ) {
+		parsedData.actOn = [];
 
-		for( var i = 0; i < verbs.length; i++ ) {
-			if( verbs[ i ].value == possibleVerb ) {
-				foundIdx = i;
-				break;
+		for( var i = 0, len = this.prepositions.length; i < len; i++ ) { 
+			var actOnIdx = parsedData.actOn.length;
+			var cPreposition = this.prepositions[ i ];
+			var cPrepsositionIdx = statement.indexOf( cPreposition );
+			var nextWordIdx = -1;
+
+			//if we found a preposition
+			if( cPrepsositionIdx > -1 ) {
+				//this is where the next word after preposition starts
+				nextWordIdx = cPrepsositionIdx + cPreposition.length + 1; //+1 because of a space
+
+				//if nextWordIdx is the same length as the statement its the end of the
+				//statement and we shouldn't continue on further
+				if( nextWordIdx < statement.length ) {
+					var nextWordEndIdx = statement.indexOf( ' ', nextWordIdx );
+
+					if( nextWordEndIdx == -1 ) {
+						nextWordEndIdx = statement.length;
+					}
+
+					while( nextWordEndIdx != -1 || nextWordEndIdx == statement.length ) {
+						var potentialNoun = statement.substr( nextWordIdx, nextWordEndIdx );
+
+						//if this is a noun then we'll add it to the list of nouns to
+						//act on if it's not a noun stop looking further
+						if( this.isNoun( potentialNoun ) ) {
+							parsedData.actOn[ actOnIdx ] = potentialNoun;
+						} else {
+							break;
+						}
+
+						//if we're not at the end of the statement we'll continue looking for words
+						if( nextWordEndIdx != statement.length ) {
+							nextWordEndIdx = statement.indexOf( ' ', nextWordEndIdx );
+
+							if( nextWordEndIdx == -1 ) {
+								nextWordEndIdx = statement.length;
+							}
+						} else {
+							//because we're at the end of the statement we'll break out
+							break;
+						}
+					}
+				}
+			}
+
+			//if we added an item to act on we'll remove the preposition and noun
+			//if the actOnIdx is not the same as the lenght then an item to act on was added
+			if( actOnIdx != parsedData.actOn.length ) {
+				statement = this.removeAtIdx( statement, cPrepsositionIdx, cPreposition + ' ' + parsedData.actOn[ actOnIdx ] );
 			}
 		}
 
-		return foundIdx;
+		return statement;
 	};
 
-	Parser.prototype.isVerbForAddedNoun = function( possibleVerb, nounDictionaryIDX ) {
-		var verbs = Dictionary.addedNouns[ nounDictionaryIDX ].verbs;
-		var foundIdx = -1;
+	Parser.prototype.parseOutKeyNouns = function( statement, parsedData ) {
+		parsedData.keyNoun = null;
 
-		for( var i = 0; i < verbs.length; i++ ) {
-			if( verbs[ i ].value == possibleVerb ) {
-				foundIdx = i;
-				break;
+		for( var i = 0, len = this.nouns.length; i < len; i++ ) { 
+			var cNoun = this.nouns[ i ];
+			var nounIdx = statement.indexOf( cNoun );
+
+			if( nounIdx != -1 ) {
+				parsedData.keyNoun = cNoun;
+				statement = this.removeAtIdx( statement, nounIdx, parsedData.keyNoun );
 			}
-		}
+		}	
 
-		return foundIdx;
+		return statement;
 	};
 
+	Parser.prototype.parseOutAndLearnNouns = function( statement, parsedData, allowLearning ) {
+		//if we don't have a a noun then we'll try to learn a noun if there is something present
+		for( var i = 0, len = this.learningKeyWords.length; i < len; i++ ) { 
+			var cLearning = this.learningKeyWords[ i ];
+			var learningIdx = statement.indexOf( cLearning );
+
+			if( learningIdx != -1 ) {
+				var nNounIdx = learningIdx + statement.length;
+
+				if( nNounIdx != statement.length ) {
+					parsedData.noun = statement.substr( nNounIdx, statement.length );
+					statement = this.removeAtIdx( statement, nNounIdx, parsedData.noun );
+
+					//we will learn this noun for future reference
+					//and if there is a keyNoun for this statement we'll also 
+					if( allowLearning ) {
+						this.addNoun( parsedData.noun, parsedData.keyNoun );
+					}
+				}
+			}
+		}	
+	};
+
+	Parser.prototype.removeAtIdx = function( statement, i, word ) {
+		return statement.substr( 0, i ) + statement.substr( i + word.length - 1, statement.length );
+	}
 
 
 	return Parser;

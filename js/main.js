@@ -103,6 +103,8 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 				var hasFunction = false;
 				var hasParameter = false;
 
+				console.log( curParsedData );
+
 				for( var i = 0; i < curParsedData.length; i++ ) {
 					switch( curParsedData[ i ].func ) {
 						case 'createClass':
