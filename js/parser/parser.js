@@ -102,10 +102,10 @@ define( function() {
 		for( var i = 0, len = separated.length; i < len; i++ ) {
 			var parsedData = {};
 
-			this.parseOutFirstVerb( separated[ i ], parsedData );
-			this.parseOutPrepositionAndNoun( separated[ i ], parsedData );
-			this.parseOutKeyNouns( separated[ i ], parsedData );
-			this.parseOutAndLearnNouns( separated[ i ], parsedData );
+			separated[ i ] = this.parseOutFirstVerb( separated[ i ], parsedData );
+			separated[ i ] = this.parseOutPrepositionAndNoun( separated[ i ], parsedData );
+			separated[ i ] = this.parseOutBaseNouns( separated[ i ], parsedData );
+			separated[ i ] = this.parseOutAndLearnNouns( separated[ i ], parsedData );
 
 			parsedCommands.push( parsedData );
 		}
@@ -127,6 +127,8 @@ define( function() {
 		for( var i = 0, len = this.separators.length; i < len; i++ ) {
 			statement.split( this.separators[ i ] ).join( '||' );
 		}
+
+		console.log( statement );
 
 		return statement.split( '||' );
 	};
@@ -215,16 +217,16 @@ define( function() {
 		return statement;
 	};
 
-	Parser.prototype.parseOutKeyNouns = function( statement, parsedData ) {
-		parsedData.keyNoun = null;
+	Parser.prototype.parseOutBaseNouns = function( statement, parsedData ) {
+		parsedData.baseNoun = null;
 
 		for( var i = 0, len = this.nouns.length; i < len; i++ ) { 
 			var cNoun = this.nouns[ i ];
 			var nounIdx = statement.indexOf( cNoun );
 
 			if( nounIdx != -1 ) {
-				parsedData.keyNoun = cNoun;
-				statement = this.removeAtIdx( statement, nounIdx, parsedData.keyNoun );
+				parsedData.baseNoun = cNoun;
+				statement = this.removeAtIdx( statement, nounIdx, parsedData.baseNoun );
 			}
 		}	
 
@@ -232,17 +234,19 @@ define( function() {
 	};
 
 	Parser.prototype.parseOutAndLearnNouns = function( statement, parsedData, allowLearning ) {
+		parsedData.noun = null;
+
 		//if we don't have a a noun then we'll try to learn a noun if there is something present
 		for( var i = 0, len = this.learningKeyWords.length; i < len; i++ ) { 
 			var cLearning = this.learningKeyWords[ i ];
 			var learningIdx = statement.indexOf( cLearning );
 
 			if( learningIdx != -1 ) {
-				var nNounIdx = learningIdx + statement.length;
+				var nNounIdx = learningIdx + cLearning.length + 1; //+1 for space
 
 				if( nNounIdx != statement.length ) {
 					parsedData.noun = statement.substr( nNounIdx, statement.length );
-					statement = this.removeAtIdx( statement, nNounIdx, parsedData.noun );
+					statement = this.removeAtIdx( statement, learningIdx, cLearning + ' ' + parsedData.noun );
 
 					//we will learn this noun for future reference
 					//and if there is a keyNoun for this statement we'll also 
@@ -251,11 +255,16 @@ define( function() {
 					}
 				}
 			}
-		}	
+		}
+
+
+		return statement;	
 	};
 
 	Parser.prototype.removeAtIdx = function( statement, i, word ) {
-		return statement.substr( 0, i ) + statement.substr( i + word.length - 1, statement.length );
+		var rVal = statement.substr( 0, i - 1 ) + statement.substr( i + word.length, statement.length );
+
+		return rVal;
 	}
 
 

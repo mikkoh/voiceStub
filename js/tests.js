@@ -8,10 +8,27 @@ requirejs.config({
 
 requirejs( [ 'parser/parser' ], function( Parser ) {
 	var parser = new Parser();
+	parser.addSeparator( 'with' );
+
+	parser.addNoun( 'class' );
+	parser.addNoun( 'function' );
+	parser.addNoun( 'parameter' );
+
+	parser.addPreposition( 'to' );
+	parser.addPreposition( 'on' );
+
+	parser.addVerbForNouns( 'create', 'class', 'function', 'parameter' );
+	parser.addVerbForNouns( 'add', 'class', 'function', 'parameter' );
+	parser.addVerbForNouns( 'delete', 'class', 'function', 'parameter' );
+	parser.addVerbForNouns( 'remove', 'class', 'function', 'parameter' );
+
+	parser.addLearningKeyword( 'called' );
+	parser.addLearningKeyword( 'named' );
 
 	function createTest( command, expectedCommands, expectedParameters, actOn ) {
 		return function() {
 			var parsedCommand = parser.parse( command );
+			console.log( parsedCommand );
 
 			for( var i = 0, len = parsedCommand.length; i < len; i++ ) {
 				ok( parsedCommand[ i ].error === undefined, parsedCommand[ i ].error );
