@@ -26,10 +26,10 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 
 			switch( command[ i ].func ) {
 				case 'createClass':
-					curItem = this.factory.getClass( command[ i ].parameters[ 0 ] );
+					curItem = this.factory.getClass( command[ i ].parameter );
 
 					if( curItem === null ) {
-						var nClass = curItem = new UIClass( this.factory.container, command[ i ].parameters );
+						var nClass = curItem = new UIClass( this.factory.container, command[ i ].parameter );
 
 						this.factory.addClass( curItem );
 
@@ -44,10 +44,10 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 						classToActOn = this.factory.getClass( command[ i ].actOn );
 					}
 
-					curItem = this.factory.getFunction( command[ i ].parameters[ 0 ], classToActOn );
+					curItem = this.factory.getFunction( command[ i ].parameter, classToActOn );
 
 					if( curItem === null ) {
-						curItem = new UIFunction( this.factory.container, command[ i ].parameters );	
+						curItem = new UIFunction( this.factory.container, command[ i ].parameter );	
 						
 						this.factory.addFunction( curItem, classToActOn );
 
@@ -66,11 +66,11 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 						functionToActOn = this.factory.getFunction( command[ i ].actOn );
 					}
 
-					curItem = this.factory.getParameter( command[ i ].parameters[ 0 ], functionToActOn );
+					curItem = this.factory.getParameter( command[ i ].parameter, functionToActOn );
 
 					if( functionToActOn !== null ) {
 						if( curItem === null ) {
-							curItem = new UIParameter( this.factory.container, command[ i ].parameters );
+							curItem = new UIParameter( this.factory.container, command[ i ].parameter );
 
 							this.factory.addParameter( curItem, functionToActOn );
 
@@ -80,7 +80,7 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 				break;
 
 				case 'deleteClass':
-					curItem = this.factory.getClass( command[ i ].parameters[ 0 ] );
+					curItem = this.factory.getClass( command[ i ].parameter );
 
 					if( curItem !== null ) {
 						curItem.remove();
@@ -92,7 +92,7 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 						classToActOn = this.factory.getClass( command[ i ].actOn );
 					}
 
-					curItem = this.factory.getFunction( command[ i ].parameters[ 0 ], classToActOn );
+					curItem = this.factory.getFunction( command[ i ].parameter, classToActOn );
 
 					if( curItem !== null ) {
 						curItem.remove();
@@ -104,7 +104,7 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 						functionToActOn = this.factory.getFunction( command[ i ].actOn );
 					}
 
-					curItem = this.factory.getParameter( command[ i ].parameters[ 0 ], functionToActOn );
+					curItem = this.factory.getParameter( command[ i ].parameter, functionToActOn );
 
 					if( curItem !== null ) {	
 						curItem.remove();
@@ -149,7 +149,7 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 
 			switch( command[ i ].func ) {
 				case 'createClass':
-					curItem = this.factory.getClass( command[ i ].parameters[ 0 ] );
+					curItem = this.factory.getClass( command[ i ].parameter );
 					curItem.remove();
 				break;
 
@@ -158,7 +158,7 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 						classToActOn = this.factory.getClass( command[ i ].actOn );
 					}
 
-					curItem = this.factory.getFunction( command[ i ].parameters[ 0 ], classToActOn );
+					curItem = this.factory.getFunction( command[ i ].parameter, classToActOn );
 					curItem.remove();
 				break;
 
@@ -167,12 +167,12 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 						functionToActOn = this.factory.getFunction( command[ i ].actOn );
 					}
 
-					curItem = this.factory.getParameter( command[ i ].parameters[ 0 ], functionToActOn );
+					curItem = this.factory.getParameter( command[ i ].parameter, functionToActOn );
 					curItem.remove();
 				break;
 
 				case 'deleteClass':
-					curItem = this.factory.getClass( command[ i ].parameters[ 0 ] );
+					curItem = this.factory.getClass( command[ i ].parameter );
 					curItem.add();
 				break;
 
@@ -181,7 +181,7 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 						classToActOn = this.factory.getClass( command[ i ].actOn );
 					}
 
-					curItem = this.factory.getFunction( command[ i ].parameters[ 0 ], classToActOn );
+					curItem = this.factory.getFunction( command[ i ].parameter, classToActOn );
 					curItem.add();
 				break;
 
@@ -190,7 +190,7 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 						functionToActOn = this.factory.getFunction( command[ i ].actOn );
 					}
 
-					curItem = this.factory.getParameter( command[ i ].parameters[ 0 ], functionToActOn );
+					curItem = this.factory.getParameter( command[ i ].parameter, functionToActOn );
 					curItem.add();
 				break;
 			}

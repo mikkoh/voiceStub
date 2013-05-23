@@ -12,6 +12,68 @@ requirejs( [ 'lib/jquery', 'parser/parser', 'ui/uiFactory', 'ui/uiCreationBtn', 
 function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecordEntry ) {
 	$( function(){
 		if( 'webkitSpeechRecognition' in window) {
+			var parser = new Parser();
+			parser.addSeparator( 'with' );
+			parser.addSeparator( 'and' );
+
+			parser.addNoun( 'class' );
+			parser.addNoun( 'function' );
+			parser.addNoun( 'parameter' );
+
+			parser.addPreposition( 'to a class called' );
+			parser.addPreposition( 'to a class named' );
+			parser.addPreposition( 'to a function called' );
+			parser.addPreposition( 'to a function named' );
+			parser.addPreposition( 'to' );
+			parser.addPreposition( 'on a class called' );
+			parser.addPreposition( 'on a class named' );
+			parser.addPreposition( 'on a function called' );
+			parser.addPreposition( 'on a function named' );
+			parser.addPreposition( 'on' );
+			parser.addPreposition( 'from a class called' );
+			parser.addPreposition( 'from a class named' );
+			parser.addPreposition( 'from a function called' );
+			parser.addPreposition( 'from a function named' );
+			parser.addPreposition( 'from' );
+
+			parser.addVerbForNouns( 'create', 'class', 'function', 'parameter' );
+			parser.addVerbForNouns( 'add', 'class', 'function', 'parameter' );
+			parser.addVerbForNouns( 'delete', 'class', 'function', 'parameter' );
+			parser.addVerbForNouns( 'remove', 'class', 'function', 'parameter' );
+			parser.addVerbForNouns( 'subtract', 'class', 'function', 'parameter' );
+
+			parser.addLearningKeyword( 'called' );
+			parser.addLearningKeyword( 'named' );
+
+			parser.addDefaultVerbForNoun( 'class', 'add' );
+			parser.addDefaultVerbForNoun( 'function', 'add' );
+			parser.addDefaultVerbForNoun( 'parameter', 'add' );
+
+			parser.addAssociation( 'class', 'create', 'createClass' );
+			parser.addAssociation( 'class', 'add', 'createClass' );
+			parser.addAssociation( 'class', 'delete', 'deleteClass' );
+			parser.addAssociation( 'class', 'remove', 'deleteClass' );
+			parser.addAssociation( 'class', 'subtract', 'deleteClass' );
+
+			parser.addAssociation( 'function', 'create', 'createFunction' );
+			parser.addAssociation( 'function', 'add', 'createFunction' );
+			parser.addAssociation( 'function', 'delete', 'deleteFunction' );
+			parser.addAssociation( 'function', 'remove', 'deleteFunction' );
+			parser.addAssociation( 'function', 'subtract', 'deleteFunction' );
+
+			parser.addAssociation( 'parameter', 'create', 'addParameter' );
+			parser.addAssociation( 'parameter', 'add', 'addParameter' );
+			parser.addAssociation( 'parameter', 'delete', 'deleteParameter' );
+			parser.addAssociation( 'parameter', 'remove', 'deleteParameter' );
+			parser.addAssociation( 'parameter', 'subtract', 'deleteParameter' );
+
+
+
+
+
+
+
+			
 			var container = $( 'body' );
 
 			var interimRecording = '';
@@ -21,8 +83,6 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 			recog.continuous = true;
 			recog.interimResults = true;
 
-			var parser = new Parser();
-			
 			var recordEntry = new UIRecordEntry( container );
 			var classEntry = new UICreationBTN( container, 'CREATE A CLASS', colours.colClass );
 			var functionEntry = new UICreationBTN( container, 'CREATE A FUNCTION', colours.colFunction );
@@ -94,11 +154,11 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 				parameterEntry.deActivate();
 				parameterEntry.setValue('');
 
-				uiFactory.addCommands( parser.parse( finalRecording ) );
+				uiFactory.addCommands( parser.parse( finalRecording, true ) );
 			}
 
 			function parseTextField() {
-				var curParsedData = parser.parse( finalRecording );
+				var curParsedData = parser.parse( finalRecording, false );
 				var hasClass = false;
 				var hasFunction = false;
 				var hasParameter = false;
@@ -143,8 +203,8 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 			function applyParsedData( entry, parsedData ) {
 				entry.activate();
 
-				if( parsedData.parameters ) {
-					entry.setValue( parsedData.parameters[ 0 ] );
+				if( parsedData.parameter ) {
+					entry.setValue( parsedData.parameter );
 				}				
 			}
 			

@@ -1,7 +1,7 @@
 define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'lib/TweenLite' ], function( $, UIBase, UIName, TweenLite ) {
 	
 	var UIParameter = function( parentContainer, initData ) {
-		this.name = initData[ 0 ];
+		this.name = initData;
 		this.parentContainer = parentContainer;
 		this.initData = initData;
 	}
