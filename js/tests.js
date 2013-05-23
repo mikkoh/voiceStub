@@ -185,6 +185,10 @@ requirejs( [ 'parser/parser' ], function( Parser ) {
 									  [ 'meow' ],
 									  [ 'foo' ] ));
 
+	test( 'add a function called go to and stop', createTest( 'add a function called go to and stop', 
+									  [ 'createFunction' ],
+									  [ 'go to and stop' ]));
+
 
 	// I took this out because for now it's near impossible to parse this kind of list
 
