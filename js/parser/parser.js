@@ -179,11 +179,52 @@ define( function() {
 	5) learned nouns
 	*/
 	Parser.prototype.separateStatement = function( statement, parsedData ) {
+		var splitStatements = statement;
+
 		for( var i = 0, len = this.separators.length; i < len; i++ ) {
-			statement = statement.split( this.separators[ i ] ).join( '||' );
+			splitStatements = splitStatements.split( this.separators[ i ] );
+
+			//now we want to go through each statement part and check if there are nouns
+			//if we don't have any nouns then we should not have split that part out
+			//eg. this would be for a case where a separator is in a function name
+			for( var j = 0; j < splitStatements.length; j++ ) {
+				var hasNoun = false;
+
+				for( var k = 0, len2 = this.nouns.length; k < len2; k++ ) {
+					if( splitStatements[ j ].indexOf( this.nouns[ k ] ) > -1 ) {
+						hasNoun = true;
+						break;
+					}
+				}
+
+				if( !hasNoun ) {
+					for( var k = 0, len2 = this.learnedNouns.length; k < len2; k++ ) {
+						if( splitStatements[ j ].indexOf( this.learnedNouns[ k ] ) > -1 ) {
+							hasNoun = true;
+							break;
+						}
+					}
+				}
+
+				//now if we wont don't have nouns we want to combine to another part
+				if( !hasNoun ) {
+					//add this statement part to the next one
+					if( j < splitStatements.length - 1 ) {
+						splitStatements[ j + 1 ] = splitStatements[ j ] + this.separators[ i ] + splitStatements[ j + 1 ];
+						splitStatements.splice( i, 1 );
+					//add it to the previous one since this is the last item
+					//if there is a previous one that is
+					} else if( splitStatements.length > 1 ) {
+						splitStatements[ j - 1 ] = splitStatements[ j - 1 ] + this.separators[ i ] + splitStatements[ j ];
+						splitStatements.splice( i, 1 );
+					}
+				}
+			}
+
+			splitStatements = splitStatements.join( '||' );
 		}
 
-		return statement.split( '||' );
+		return splitStatements.split( '||' );
 	};
 
 	Parser.prototype.parseOutFirstVerb = function( statement, parsedData ) {
@@ -254,8 +295,6 @@ define( function() {
 	Parser.prototype.parseOutNouns = function( statement, parsedData ) {
 		parsedData.baseNoun = null;
 
-		console.log( 'BEFORE', statement );
-
 		for( var i = 0, len = this.nouns.length; i < len; i++ ) { 
 			var cNoun = this.nouns[ i ];
 			var nounIdx = statement.indexOf( cNoun );
@@ -265,8 +304,6 @@ define( function() {
 				statement = this.removeAtIdx( statement, nounIdx, cNoun );
 			}
 		}	
-
-		console.log( 'AFTER', statement );
 
 		for( var i = 0, len = this.learnedNouns.length; i < len; i++ ) { 
 			var cNoun = this.learnedNouns[ i ];
