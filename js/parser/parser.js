@@ -9,9 +9,13 @@ define( function() {
 		this.prepositionLookUp = {};
 		this.nouns = [];
 		this.nounLookUp = {};
+		this.learnedNouns = [];
+		this.baseNounForLearned = {};
+		this.learnedNounLookUp = {};
 		this.verbsForNouns = {};
 		this.learningKeyWords = [];
 		this.learningKeyWordLookUp = {};
+		this.associations = {};
 	};
 
 	Parser.prototype.separators = null;
@@ -22,9 +26,13 @@ define( function() {
 	Parser.prototype.prepositionLookUp = null;
 	Parser.prototype.nouns = null;
 	Parser.prototype.nounLookUp = null;
+	Parser.prototype.learnedNouns = null;
+	Parser.prototype.baseNounForLearned = null;
+	Parser.prototype.learnedNounLookUp = null;
 	Parser.prototype.verbsForNouns = null;
 	Parser.prototype.learningKeyWords = null;
 	Parser.prototype.learningKeyWordLookUp = null;
+	Parser.prototype.associations = null;
 
 
 	Parser.prototype.addSeparator = function( word ) {
@@ -81,6 +89,24 @@ define( function() {
 		return this.nounLookUp[ word ];
 	};
 
+	Parser.prototype.addLearnedNoun = function( word, baseNoun ) {
+		this.learnedNouns.push( word );
+		this.learnedNounLookUp[ word ] = true;
+		this.baseNounForLearned[ word ] = baseNoun;
+
+		if( baseNoun !== undefined ) {
+			if( this.verbsForNouns[ baseNoun ] === undefined ) {
+				throw new Error( 'Base noun is not defined previously or no verbs have been defined for it' );
+			}
+
+			this.verbsForNouns[ word ] = this.verbsForNouns[ baseNoun ];
+		}
+	};
+
+	Parser.prototype.isLearnedNoun = function( word ) {
+		return this.learnedNounLookUp[ word ];
+	};
+
 	Parser.prototype.addLearningKeyword = function( word ) {
 		this.learningKeyWords.push( word );
 		this.learningKeyWordLookUp[ word ] = true;
@@ -88,7 +114,15 @@ define( function() {
 
 	Parser.prototype.isLearningKeyword = function( word ) {
 		return this.learningKeyWordLookUp[ word ];
-	}
+	};
+
+	Parser.prototype.addAssociation = function( noun, verb, item ) {
+		if( this.associations[ noun ] === undefined ) {
+			this.associations[ noun ] = {};
+		}
+
+		this.associations[ noun ][ verb ] = item;
+	};
 
 
 	Parser.prototype.parse = function( statement, allowLearning ) {
@@ -104,9 +138,17 @@ define( function() {
 
 			separated[ i ] = this.parseOutFirstVerb( separated[ i ], parsedData );
 			separated[ i ] = this.parseOutPrepositionAndNoun( separated[ i ], parsedData );
-			separated[ i ] = this.parseOutBaseNouns( separated[ i ], parsedData );
-			separated[ i ] = this.parseOutAndLearnNouns( separated[ i ], parsedData );
+			separated[ i ] = this.parseOutNouns( separated[ i ], parsedData );
+			separated[ i ] = this.parseOutAndLearnNouns( separated[ i ], parsedData, allowLearning );
 
+			if( this.associations[ parsedData.baseNoun ] ){
+				parsedData.func = this.associations[ parsedData.baseNoun ][ parsedData.verb ];	
+				parsedData.parameter = parsedData.noun;
+			} else {
+				parsedData.func = null;
+				parsedData.parameter = null;
+			}
+			
 			parsedCommands.push( parsedData );
 		}
 
@@ -128,8 +170,6 @@ define( function() {
 			statement.split( this.separators[ i ] ).join( '||' );
 		}
 
-		console.log( statement );
-
 		return statement.split( '||' );
 	};
 
@@ -145,7 +185,7 @@ define( function() {
 			//earlier in the sentence we do this because
 			if( curIdx > -1 && i < idx ) {
 				word = this.verbs[ i ];
-				idx = i;
+				idx = curIdx;
 			}
 		}
 
@@ -176,17 +216,17 @@ define( function() {
 				//statement and we shouldn't continue on further
 				if( nextWordIdx < statement.length ) {
 					var nextWordEndIdx = statement.indexOf( ' ', nextWordIdx );
-
+					
 					if( nextWordEndIdx == -1 ) {
 						nextWordEndIdx = statement.length;
 					}
 
 					while( nextWordEndIdx != -1 || nextWordEndIdx == statement.length ) {
-						var potentialNoun = statement.substr( nextWordIdx, nextWordEndIdx );
+						var potentialNoun = statement.substring( nextWordIdx, nextWordEndIdx );
 
 						//if this is a noun then we'll add it to the list of nouns to
 						//act on if it's not a noun stop looking further
-						if( this.isNoun( potentialNoun ) ) {
+						if( this.isLearnedNoun( potentialNoun ) ) {
 							parsedData.actOn[ actOnIdx ] = potentialNoun;
 						} else {
 							break;
@@ -217,7 +257,7 @@ define( function() {
 		return statement;
 	};
 
-	Parser.prototype.parseOutBaseNouns = function( statement, parsedData ) {
+	Parser.prototype.parseOutNouns = function( statement, parsedData ) {
 		parsedData.baseNoun = null;
 
 		for( var i = 0, len = this.nouns.length; i < len; i++ ) { 
@@ -226,32 +266,47 @@ define( function() {
 
 			if( nounIdx != -1 ) {
 				parsedData.baseNoun = cNoun;
-				statement = this.removeAtIdx( statement, nounIdx, parsedData.baseNoun );
+				statement = this.removeAtIdx( statement, nounIdx, cNoun );
 			}
 		}	
+
+
+		for( var i = 0, len = this.learnedNouns.length; i < len; i++ ) { 
+			var cNoun = this.learnedNouns[ i ];
+			var nounIdx = statement.indexOf( cNoun );
+
+			if( nounIdx != -1 ) {
+				parsedData.baseNoun = this.baseNounForLearned[ cNoun ];
+				parsedData.noun = cNoun;
+
+				statement = this.removeAtIdx( statement, nounIdx, cNoun );
+			}
+		}
 
 		return statement;
 	};
 
 	Parser.prototype.parseOutAndLearnNouns = function( statement, parsedData, allowLearning ) {
-		parsedData.noun = null;
+		if( parsedData.noun === undefined ) {
+			parsedData.noun = null;
 
-		//if we don't have a a noun then we'll try to learn a noun if there is something present
-		for( var i = 0, len = this.learningKeyWords.length; i < len; i++ ) { 
-			var cLearning = this.learningKeyWords[ i ];
-			var learningIdx = statement.indexOf( cLearning );
+			//if we don't have a a noun then we'll try to learn a noun if there is something present
+			for( var i = 0, len = this.learningKeyWords.length; i < len; i++ ) { 
+				var cLearning = this.learningKeyWords[ i ];
+				var learningIdx = statement.indexOf( cLearning );
 
-			if( learningIdx != -1 ) {
-				var nNounIdx = learningIdx + cLearning.length + 1; //+1 for space
+				if( learningIdx != -1 ) {
+					var nNounIdx = learningIdx + cLearning.length; //+1 for space
 
-				if( nNounIdx != statement.length ) {
-					parsedData.noun = statement.substr( nNounIdx, statement.length );
-					statement = this.removeAtIdx( statement, learningIdx, cLearning + ' ' + parsedData.noun );
+					if( nNounIdx != statement.length ) {
+						parsedData.noun = statement.substr( nNounIdx + 1, statement.length );
+						statement = this.removeAtIdx( statement, learningIdx, cLearning + ' ' + parsedData.noun );
 
-					//we will learn this noun for future reference
-					//and if there is a keyNoun for this statement we'll also 
-					if( allowLearning ) {
-						this.addNoun( parsedData.noun, parsedData.keyNoun );
+						//we will learn this noun for future reference
+						//and if there is a keyNoun for this statement we'll also 
+						if( allowLearning && !this.isLearnedNoun( parsedData.noun ) ) {
+							this.addLearnedNoun( parsedData.noun, parsedData.baseNoun );
+						}
 					}
 				}
 			}
@@ -262,8 +317,8 @@ define( function() {
 	};
 
 	Parser.prototype.removeAtIdx = function( statement, i, word ) {
-		var rVal = statement.substr( 0, i - 1 ) + statement.substr( i + word.length, statement.length );
-
+		var rVal = statement.substring( 0, i - 1 ) + statement.substring( i + word.length, statement.length );	
+		
 		return rVal;
 	}
 

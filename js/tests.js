@@ -16,16 +16,38 @@ requirejs( [ 'parser/parser' ], function( Parser ) {
 
 	parser.addPreposition( 'to' );
 	parser.addPreposition( 'on' );
+	parser.addPreposition( 'from' );
 
 	parser.addVerbForNouns( 'create', 'class', 'function', 'parameter' );
 	parser.addVerbForNouns( 'add', 'class', 'function', 'parameter' );
 	parser.addVerbForNouns( 'delete', 'class', 'function', 'parameter' );
 	parser.addVerbForNouns( 'remove', 'class', 'function', 'parameter' );
+	parser.addVerbForNouns( 'subtract', 'class', 'function', 'parameter' );
 
 	parser.addLearningKeyword( 'called' );
 	parser.addLearningKeyword( 'named' );
 
-	function createTest( command, expectedCommands, expectedParameters, actOn ) {
+	parser.addAssociation( 'class', 'create', 'createClass' );
+	parser.addAssociation( 'class', 'add', 'createClass' );
+	parser.addAssociation( 'class', 'delete', 'deleteClass' );
+	parser.addAssociation( 'class', 'remove', 'deleteClass' );
+	parser.addAssociation( 'class', 'subtract', 'deleteClass' );
+
+	parser.addAssociation( 'function', 'create', 'createFunction' );
+	parser.addAssociation( 'function', 'add', 'createFunction' );
+	parser.addAssociation( 'function', 'delete', 'deleteFunction' );
+	parser.addAssociation( 'function', 'remove', 'deleteFunction' );
+	parser.addAssociation( 'function', 'subtract', 'deleteFunction' );
+
+	parser.addAssociation( 'parameter', 'create', 'addParameter' );
+	parser.addAssociation( 'parameter', 'add', 'addParameter' );
+	parser.addAssociation( 'parameter', 'delete', 'deleteParameter' );
+	parser.addAssociation( 'parameter', 'remove', 'deleteParameter' );
+	parser.addAssociation( 'parameter', 'subtract', 'deleteParameter' );
+
+
+
+	function createTest( command, expectedCommands, expectedparameter, actOn ) {
 		return function() {
 			var parsedCommand = parser.parse( command );
 			console.log( parsedCommand );
@@ -37,9 +59,9 @@ requirejs( [ 'parser/parser' ], function( Parser ) {
 				'Commands received were not corrected. Expected: ' + expectedCommands[ i ] +
 				' Received:' + parsedCommand[ i ].func );
 
-				equal( parsedCommand[ i ].parameters[ 0 ], expectedParameters[ i ], 
-				'Parameters received were not corrected. Expected: ' + expectedCommands[ i ] +
-				' Received:' + parsedCommand[ i ].parameters[ 0 ] );
+				equal( parsedCommand[ i ].parameter, expectedparameter[ i ], 
+				'parameter received were not corrected. Expected: ' + expectedCommands[ i ] +
+				' Received:' + parsedCommand[ i ].parameter );
 
 				if( actOn ) {
 					equal( parsedCommand[ i ].actOn, actOn[ i ], 'ActOn was incorrect expected' + actOn[ i ] + 'got ' + parsedCommand[ i ].actOn );
