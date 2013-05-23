@@ -9,13 +9,26 @@ requirejs.config({
 requirejs( [ 'parser/parser' ], function( Parser ) {
 	var parser = new Parser();
 	parser.addSeparator( 'with' );
+	parser.addSeparator( 'and' );
 
 	parser.addNoun( 'class' );
 	parser.addNoun( 'function' );
 	parser.addNoun( 'parameter' );
 
+	parser.addPreposition( 'to a class called' );
+	parser.addPreposition( 'to a class named' );
+	parser.addPreposition( 'to a function called' );
+	parser.addPreposition( 'to a function named' );
 	parser.addPreposition( 'to' );
+	parser.addPreposition( 'on a class called' );
+	parser.addPreposition( 'on a class named' );
+	parser.addPreposition( 'on a function called' );
+	parser.addPreposition( 'on a function named' );
 	parser.addPreposition( 'on' );
+	parser.addPreposition( 'from a class called' );
+	parser.addPreposition( 'from a class named' );
+	parser.addPreposition( 'from a function called' );
+	parser.addPreposition( 'from a function named' );
 	parser.addPreposition( 'from' );
 
 	parser.addVerbForNouns( 'create', 'class', 'function', 'parameter' );
@@ -26,6 +39,10 @@ requirejs( [ 'parser/parser' ], function( Parser ) {
 
 	parser.addLearningKeyword( 'called' );
 	parser.addLearningKeyword( 'named' );
+
+	parser.addDefaultVerbForNoun( 'class', 'add' );
+	parser.addDefaultVerbForNoun( 'function', 'add' );
+	parser.addDefaultVerbForNoun( 'parameter', 'add' );
 
 	parser.addAssociation( 'class', 'create', 'createClass' );
 	parser.addAssociation( 'class', 'add', 'createClass' );
@@ -64,13 +81,13 @@ requirejs( [ 'parser/parser' ], function( Parser ) {
 				' Received:' + parsedCommand[ i ].parameter );
 
 				if( actOn ) {
-					equal( parsedCommand[ i ].actOn, actOn[ i ], 'ActOn was incorrect expected' + actOn[ i ] + 'got ' + parsedCommand[ i ].actOn );
+					equal( parsedCommand[ i ].actOn, actOn[ i ], 'ActOn was incorrect expected ' + actOn[ i ] + ' got ' + parsedCommand[ i ].actOn );
 				}
 			}
 		}
 	};
 
-	module( 'Creating Classes' );
+	// module( 'Creating Classes' );
 	test( 'add a class called cat', createTest( 'add a class called cat', 
 												[ 'createClass' ],
 												[ 'cat' ] ));
@@ -145,7 +162,7 @@ requirejs( [ 'parser/parser' ], function( Parser ) {
 									  [ 'createClass',
 									    'createFunction' ],
 									  [ 'cat',
-									  	'wildThing' ] ));
+									  	'wild thing' ] ));
 
 	test( 'create a class named cat and add a function named meow', createTest( 'create a class named cat and add a function named meow', 
 									  [ 'createClass',

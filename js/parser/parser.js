@@ -16,6 +16,7 @@ define( function() {
 		this.learningKeyWords = [];
 		this.learningKeyWordLookUp = {};
 		this.associations = {};
+		this.defaultVerbForNoun = {};
 	};
 
 	Parser.prototype.separators = null;
@@ -33,6 +34,7 @@ define( function() {
 	Parser.prototype.learningKeyWords = null;
 	Parser.prototype.learningKeyWordLookUp = null;
 	Parser.prototype.associations = null;
+	Parser.prototype.defaultVerbForNoun = null;
 
 
 	Parser.prototype.addSeparator = function( word ) {
@@ -57,6 +59,10 @@ define( function() {
 
 			this.verbsForNouns[ noun ].push( word );
 		}
+	};
+
+	Parser.prototype.addDefaultVerbForNoun = function( word, verb ) {
+		this.defaultVerbForNoun[ word ] = verb;
 	};
 
 	Parser.prototype.isVerb = function( word ) {
@@ -141,6 +147,13 @@ define( function() {
 			separated[ i ] = this.parseOutNouns( separated[ i ], parsedData );
 			separated[ i ] = this.parseOutAndLearnNouns( separated[ i ], parsedData, allowLearning );
 
+			//this if statement will check if a verb hasnt been found but a basenoun has
+			//if so we'll use the default verb
+			if( parsedData.baseNoun && parsedData.verb == null && this.defaultVerbForNoun[ parsedData.baseNoun ] ) {
+				parsedData.verb = this.defaultVerbForNoun[ parsedData.baseNoun ];
+			}
+
+
 			if( this.associations[ parsedData.baseNoun ] ){
 				parsedData.func = this.associations[ parsedData.baseNoun ][ parsedData.verb ];	
 				parsedData.parameter = parsedData.noun;
@@ -167,7 +180,7 @@ define( function() {
 	*/
 	Parser.prototype.separateStatement = function( statement, parsedData ) {
 		for( var i = 0, len = this.separators.length; i < len; i++ ) {
-			statement.split( this.separators[ i ] ).join( '||' );
+			statement = statement.split( this.separators[ i ] ).join( '||' );
 		}
 
 		return statement.split( '||' );
@@ -199,66 +212,49 @@ define( function() {
 	};
 
 	Parser.prototype.parseOutPrepositionAndNoun = function( statement, parsedData ) {
-		parsedData.actOn = [];
+		parsedData.actOn = null;
 
 		for( var i = 0, len = this.prepositions.length; i < len; i++ ) { 
-			var actOnIdx = parsedData.actOn.length;
 			var cPreposition = this.prepositions[ i ];
 			var cPrepsositionIdx = statement.indexOf( cPreposition );
-			var nextWordIdx = -1;
+			var spaceIdx = statement.length;
 
 			//if we found a preposition
-			if( cPrepsositionIdx > -1 ) {
-				//this is where the next word after preposition starts
-				nextWordIdx = cPrepsositionIdx + cPreposition.length + 1; //+1 because of a space
+			//checking for the space will make sure the preposition doesnt happen within a word
+			if( cPrepsositionIdx > -1 && statement.charAt( cPrepsositionIdx - 1 ) == ' ' ) {
+				//we'll start looking from the end of the statement until we hit the preposition
+				
 
-				//if nextWordIdx is the same length as the statement its the end of the
-				//statement and we shouldn't continue on further
-				if( nextWordIdx < statement.length ) {
-					var nextWordEndIdx = statement.indexOf( ' ', nextWordIdx );
+				while( spaceIdx > cPrepsositionIdx ) {
+					var wordStartIdx = statement.lastIndexOf( ' ', spaceIdx ) + 1;
 					
-					if( nextWordEndIdx == -1 ) {
-						nextWordEndIdx = statement.length;
+					var possibleLearnedNoun = statement.substring( wordStartIdx, statement.length );
+
+					if( this.isLearnedNoun( possibleLearnedNoun ) ) {
+						parsedData.actOn = possibleLearnedNoun;
 					}
 
-					while( nextWordEndIdx != -1 || nextWordEndIdx == statement.length ) {
-						var potentialNoun = statement.substring( nextWordIdx, nextWordEndIdx );
+					spaceIdx = wordStartIdx - 2;
+				}
 
-						//if this is a noun then we'll add it to the list of nouns to
-						//act on if it's not a noun stop looking further
-						if( this.isLearnedNoun( potentialNoun ) ) {
-							parsedData.actOn[ actOnIdx ] = potentialNoun;
-						} else {
-							break;
-						}
+				if( parsedData.actOn ) {
+					statement = statement.substring( 0, cPrepsositionIdx );
 
-						//if we're not at the end of the statement we'll continue looking for words
-						if( nextWordEndIdx != statement.length ) {
-							nextWordEndIdx = statement.indexOf( ' ', nextWordEndIdx );
-
-							if( nextWordEndIdx == -1 ) {
-								nextWordEndIdx = statement.length;
-							}
-						} else {
-							//because we're at the end of the statement we'll break out
-							break;
-						}
-					}
+					break;
 				}
 			}
-
-			//if we added an item to act on we'll remove the preposition and noun
-			//if the actOnIdx is not the same as the lenght then an item to act on was added
-			if( actOnIdx != parsedData.actOn.length ) {
-				statement = this.removeAtIdx( statement, cPrepsositionIdx, cPreposition + ' ' + parsedData.actOn[ actOnIdx ] );
-			}
 		}
+
+		
+
 
 		return statement;
 	};
 
 	Parser.prototype.parseOutNouns = function( statement, parsedData ) {
 		parsedData.baseNoun = null;
+
+		console.log( 'BEFORE', statement );
 
 		for( var i = 0, len = this.nouns.length; i < len; i++ ) { 
 			var cNoun = this.nouns[ i ];
@@ -270,13 +266,17 @@ define( function() {
 			}
 		}	
 
+		console.log( 'AFTER', statement );
 
 		for( var i = 0, len = this.learnedNouns.length; i < len; i++ ) { 
 			var cNoun = this.learnedNouns[ i ];
 			var nounIdx = statement.indexOf( cNoun );
 
 			if( nounIdx != -1 ) {
-				parsedData.baseNoun = this.baseNounForLearned[ cNoun ];
+				if( parsedData.baseNoun == null ) {
+					parsedData.baseNoun = this.baseNounForLearned[ cNoun ];
+				}
+
 				parsedData.noun = cNoun;
 
 				statement = this.removeAtIdx( statement, nounIdx, cNoun );
@@ -299,8 +299,10 @@ define( function() {
 					var nNounIdx = learningIdx + cLearning.length; //+1 for space
 
 					if( nNounIdx != statement.length ) {
-						parsedData.noun = statement.substr( nNounIdx + 1, statement.length );
+						parsedData.noun = statement.substr( nNounIdx + 1, statement.length ).trim();
 						statement = this.removeAtIdx( statement, learningIdx, cLearning + ' ' + parsedData.noun );
+
+
 
 						//we will learn this noun for future reference
 						//and if there is a keyNoun for this statement we'll also 
