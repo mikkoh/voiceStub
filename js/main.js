@@ -154,10 +154,13 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 				parameterEntry.deActivate();
 				parameterEntry.setValue('');
 
+				finalRecording = finalRecording.split( '&nbsp;' ).join( ' ' );
 				uiFactory.addCommands( parser.parse( finalRecording, true ) );
 			}
 
 			function parseTextField() {
+				finalRecording = finalRecording.split( '&nbsp;' ).join( ' ' );
+				
 				var curParsedData = parser.parse( finalRecording, false );
 				var hasClass = false;
 				var hasFunction = false;
