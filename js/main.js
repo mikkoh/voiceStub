@@ -8,8 +8,8 @@ requirejs.config({
 
 
 
-requirejs( [ 'lib/jquery', 'parser/parser', 'ui/uiFactory', 'ui/uiCreationBtn', 'model/colours', 'ui/uiRecordPreview', 'ui/uiRecordEntry' ], 
-function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecordEntry ) {
+requirejs( [ 'lib/jquery', 'parser/parser', 'ui/uiFactory', 'ui/uiCreationBtn', 'model/colours', 'ui/uiRecordPreview', 'ui/uiRecordEntry', 'exporter/exporterJavascript' ], 
+function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecordEntry, ExporterJavascript ) {
 	$( function(){
 		if( 'webkitSpeechRecognition' in window) {
 			var parser = new Parser();
@@ -265,6 +265,20 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 			recog.onspeechend = function() {
 				console.log( 'sound end' );
 			};
+
+
+
+			finalRecording = 'create a class called mikko with a function called testing this thing with a parameter called a lot';
+			endParseTextField();
+
+			finalRecording = 'create a class called matti with a function called testing this thing with a parameter called a lot';
+			endParseTextField();
+
+			finalRecording = 'create a function called testing with a parameter called open';
+			endParseTextField();
+
+			var jsExporter = new ExporterJavascript();
+			console.log( jsExporter.getString( uiFactory.getObjectRepresentation() ) );
 		}
 	});
 });
