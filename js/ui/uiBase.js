@@ -9,6 +9,7 @@ define( function() {
 	UIBase.prototype.type = null;
 	UIBase.prototype.container = null;
 	UIBase.prototype.nameContainer = null;
+	UIBase.prototype.parent = null;
 	UIBase.prototype.parentContainer = null;
 	UIBase.prototype.initialized = false;
 	UIBase.prototype.animatedIn = false;
@@ -99,6 +100,8 @@ define( function() {
 	};
 
 	UIBase.prototype.setParent = function( parent ) {
+		this.parent = parent;
+
 		this.parentContainer = parent.childContainer;
 		
 		this.container.appendTo( this.parentContainer );
