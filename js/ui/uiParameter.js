@@ -1,6 +1,7 @@
 define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'lib/TweenLite' ], function( $, UIBase, UIName, TweenLite ) {
 	
 	var UIParameter = function( parentContainer, initData ) {
+		this.type = 'parameter';
 		this.name = initData;
 		this.parentContainer = parentContainer;
 		this.initData = initData;
@@ -14,8 +15,7 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'lib/TweenLite' ], function( $
 		this.onInit = onInit;
 
 		this.container = $( '<div class="parameter"><img id="separator" src="images/parameterSeparator.png" width="7" height="47" /></div>' )
-		.css( 'display', 'inline-block')
-		.appendTo( this.parentContainer );
+		.css( 'display', 'inline-block');
 
 		this.addItemToInit();
 		this.nameUI = new UIName( this.container );
@@ -29,6 +29,7 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'lib/TweenLite' ], function( $
 		.css( 'height', 0 )
 		.load( this.onItemInit.bind( this ) );
 
+		this.add();
 		this.initialized = true;
 		this.onItemInit();
 	};

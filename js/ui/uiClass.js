@@ -1,6 +1,7 @@
 define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiClassIcon' ], function( $, UIBase, UIName, UIIcon ) {
 	
 	var UIClass = function( parentContainer, initData ) {
+		this.type = 'class';
 		this.name = initData;
 		this.parentContainer = parentContainer;
 		this.children = [];
@@ -18,8 +19,7 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiClassIcon' ], function( 
 		this.onInit = onInit;
 
 		this.container = $( '<div class="class"></div>' )
-		.css( 'margin-top', 40 )
-		.appendTo( this.parentContainer );
+		.css( 'margin-top', 40 );
 
 		this.addItemToInit();
 		this.iconUI = new UIIcon( this.container );
@@ -44,6 +44,7 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiClassIcon' ], function( 
 			this.children[i].setParent( this );
 		}
 
+		this.add();
 		this.initialized = true;
 		this.onItemInit();
 	};

@@ -6,6 +6,7 @@ define( function() {
 
 	UIBase.prototype.isOnStage = false;
 	UIBase.prototype.name = null;
+	UIBase.prototype.type = null;
 	UIBase.prototype.container = null;
 	UIBase.prototype.nameContainer = null;
 	UIBase.prototype.parentContainer = null;
@@ -105,6 +106,27 @@ define( function() {
 
 	UIBase.prototype.addItemToInit = function() {
 		this.numItemsToInit++;
+	};
+
+	UIBase.prototype.getObjectRepresentation = function( parentObject ) {
+		var rVal = {
+			type: this.type,
+			children: null
+		};
+
+		if( this.children ) {
+			rVal.children = {};
+
+			for( var i = 0, len = this.children.length; i < len; i++ ) {
+				this.children[ i ].getObjectRepresentation( rVal.children );
+			}
+		}
+
+		if( parentObject ) {
+			parentObject[ this.name ] = rVal;
+		}
+
+		return rVal;
 	};
 
 	UIBase.prototype.onItemInit = function() {

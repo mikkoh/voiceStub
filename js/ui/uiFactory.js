@@ -220,16 +220,22 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 	UIFactory.prototype.functionsForClass = null;
 	UIFactory.prototype.parametersForFunctions = null;
 
-	UIFactory.prototype.getItems = function() {
+	UIFactory.prototype.getObjectRepresentation = function() {
+		var items = {};
+
 		for( var i = 0, len = this.classes.length; i < len; i++ ) {
 			if( this.classes[ i ].isOnStage ) {
-				
+				items[ this.classes[ i ].name ] = this.classes[ i ].getObjectRepresentation();
 			}
 		}
 
 		for( var i = 0, len = this.functions.length; i < len; i++ ) {
-			
+			if( this.functions[ i ].isOnStage ) {
+				items[ this.functions[ i ].name ] = this.functions[ i ].getObjectRepresentation();
+			}	
 		}
+
+		return items;
 	};
 
 	UIFactory.prototype.addCommands = function( command ) {

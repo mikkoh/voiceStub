@@ -1,6 +1,7 @@
 define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], function( $, UIBase, UIName, UIIcon ) {
 	
 	var UIFunction = function( parentContainer, initData ) {
+		this.type = 'function';
 		this.name = initData;
 		this.parentContainer = parentContainer;
 		this.children = [];
@@ -16,8 +17,7 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 		this.onInit = onInit;
 		
 		this.container = $( '<div class="function"></div>' )
-		.css( 'font-size', 20 )
-		.appendTo( this.parentContainer );
+		.css( 'font-size', 20 );
 
 		var numInit = 0;
 		var numItemsToInit = 2;
@@ -49,6 +49,7 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 			this.children[i].setParent( this );
 		}
 
+		this.add();
 		this.initialized = true;
 		this.onItemInit();
 	};
