@@ -161,6 +161,7 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 			function parseTextField() {
 				finalRecording = finalRecording.split( '&nbsp;' ).join( ' ' );
 				
+				console.log( finalRecording );
 				var curParsedData = parser.parse( finalRecording, false );
 				var hasClass = false;
 				var hasFunction = false;

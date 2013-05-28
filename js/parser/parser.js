@@ -191,7 +191,7 @@ define( function() {
 				var hasNoun = false;
 
 				for( var k = 0, len2 = this.nouns.length; k < len2; k++ ) {
-					if( splitStatements[ j ].indexOf( this.nouns[ k ] ) > -1 ) {
+					if( this.indexOfWholeWord( splitStatements[ j ], this.nouns[ k ] ) > -1 ) {
 						hasNoun = true;
 						break;
 					}
@@ -199,7 +199,7 @@ define( function() {
 
 				if( !hasNoun ) {
 					for( var k = 0, len2 = this.learnedNouns.length; k < len2; k++ ) {
-						if( splitStatements[ j ].indexOf( this.learnedNouns[ k ] ) > -1 ) {
+						if( this.indexOfWholeWord( splitStatements[ j ], this.learnedNouns[ k ] ) > -1 ) {
 							hasNoun = true;
 							break;
 						}
@@ -233,7 +233,7 @@ define( function() {
 		parsedData.verb = null;
 
 		for( var i = 0, len = this.verbs.length; i < len; i++ ) { 
-			var curIdx = statement.indexOf( this.verbs[ i ] );
+			var curIdx =  this.indexOfWholeWord( statement, this.verbs[ i ] );
 
 			//if we found a verb we want to check if this verb is
 			//earlier in the sentence we do this because
@@ -257,7 +257,7 @@ define( function() {
 
 		for( var i = 0, len = this.prepositions.length; i < len; i++ ) { 
 			var cPreposition = this.prepositions[ i ];
-			var cPrepsositionIdx = statement.indexOf( cPreposition );
+			var cPrepsositionIdx = this.indexOfWholeWord( statement, cPreposition );
 			var spaceIdx = statement.length;
 
 			//if we found a preposition
@@ -297,7 +297,7 @@ define( function() {
 
 		for( var i = 0, len = this.nouns.length; i < len; i++ ) { 
 			var cNoun = this.nouns[ i ];
-			var nounIdx = statement.indexOf( cNoun );
+			var nounIdx = this.indexOfWholeWord( statement, cNoun );
 
 			if( nounIdx != -1 ) {
 				parsedData.baseNoun = cNoun;
@@ -307,7 +307,7 @@ define( function() {
 
 		for( var i = 0, len = this.learnedNouns.length; i < len; i++ ) { 
 			var cNoun = this.learnedNouns[ i ];
-			var nounIdx = statement.indexOf( cNoun );
+			var nounIdx = this.indexOfWholeWord( statement, cNoun );
 
 			if( nounIdx != -1 ) {
 				if( parsedData.baseNoun == null ) {
@@ -330,7 +330,7 @@ define( function() {
 			//if we don't have a a noun then we'll try to learn a noun if there is something present
 			for( var i = 0, len = this.learningKeyWords.length; i < len; i++ ) { 
 				var cLearning = this.learningKeyWords[ i ];
-				var learningIdx = statement.indexOf( cLearning );
+				var learningIdx = this.indexOfWholeWord( statement, cLearning );
 
 				if( learningIdx != -1 ) {
 					var nNounIdx = learningIdx + cLearning.length; //+1 for space
@@ -354,6 +354,33 @@ define( function() {
 
 		return statement;	
 	};
+
+	Parser.prototype.indexOfWholeWord = function( statement, word ) {
+		var startIdx = statement.indexOf( word );
+		var endIdx = startIdx + word.length;
+
+		if( startIdx != -1 ) {
+			if( startIdx == 0 ) {
+				// if this is not at the end of the statement and the character after is not a space
+				// then this is not a whole word
+				if( endIdx != statement.length && statement.charAt( endIdx ) != ' ' ) {
+					startIdx = -1;
+				}
+			} else if( startIdx == statement.length - word.length ) {
+				// if the character before the start index is not a space then it's not a whole word
+				if( statement.charAt( startIdx - 1 ) != ' ' ) {
+					startIdx = -1;
+				}
+			} else {
+				// if there are no space characters before and after then it's not a whole word
+				if( statement.charAt( startIdx - 1 ) != ' ' || statement.charAt( endIdx ) != ' ' ) {
+					startIdx = -1;
+				}
+			}
+		}
+
+		return startIdx;
+	}
 
 	Parser.prototype.removeAtIdx = function( statement, i, word ) {
 		var rVal = statement.substring( 0, i - 1 ) + statement.substring( i + word.length, statement.length );	
