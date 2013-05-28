@@ -220,6 +220,18 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 	UIFactory.prototype.functionsForClass = null;
 	UIFactory.prototype.parametersForFunctions = null;
 
+	UIFactory.prototype.getItems = function() {
+		for( var i = 0, len = this.classes.length; i < len; i++ ) {
+			if( this.classes[ i ].isOnStage ) {
+				
+			}
+		}
+
+		for( var i = 0, len = this.functions.length; i < len; i++ ) {
+			
+		}
+	};
+
 	UIFactory.prototype.addCommands = function( command ) {
 		if( command ) {
 			var job = new FactoryJob( this, command );

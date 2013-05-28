@@ -1,8 +1,10 @@
 define( function() {
 	var UIBase = function( parentContainer ) {
 		this.parentContainer = parentContainer;
+		this.children = [];
 	};
 
+	UIBase.prototype.isOnStage = false;
 	UIBase.prototype.name = null;
 	UIBase.prototype.container = null;
 	UIBase.prototype.nameContainer = null;
@@ -11,19 +13,22 @@ define( function() {
 	UIBase.prototype.animatedIn = false;
 	UIBase.prototype.numItemsInit = 0;
 	UIBase.prototype.numItemsToInit = 1;
+	UIBase.prototype.children = null;
 	UIBase.prototype.onInit = null;
 
-	UIBase.prototype.changeContainer = function( parentContainer ) {
-		this.parentContainer = parentContainer;
+	UIBase.prototype.setParent = function( parent ) {
+		this.parentContainer = parent.childContainer;
 		
 		this.container.appendTo( this.parentContainer );
 	};
 
 	UIBase.prototype.add = function() {
+		this.isOnStage = true;
 		this.container.appendTo( this.parentContainer );	
 	};
 
 	UIBase.prototype.remove = function() {
+		this.isOnStage = false;
 		this.container.remove();
 	};
 
@@ -79,6 +84,23 @@ define( function() {
 		.bind( 'keydown', onKeyDown )
 		.bind( 'blur', onFinish )
 		.unbind( 'click', this.onNameClick );
+	};
+
+	UIBase.prototype.addItem = function( ui ) {
+		this.addItemToInit();
+		this.children.push( ui );
+
+		if( this.initialized ) {
+			if( !ui.initialized ) {
+				ui.init( this.onItemInit.bind( this ) );
+			}
+
+			ui.setParent( this );
+		}
+
+		if( this.animatedIn ) {
+			ui.animateIn();
+		}
 	};
 
 	UIBase.prototype.addItemToInit = function() {

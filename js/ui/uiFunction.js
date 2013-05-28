@@ -3,15 +3,14 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 	var UIFunction = function( parentContainer, initData ) {
 		this.name = initData;
 		this.parentContainer = parentContainer;
-		this.parameters = [];
+		this.children = [];
 		this.initData = initData;
 	}
 
 	UIFunction.prototype = Object.create( UIBase.prototype );
-	UIFunction.prototype.parameterContainer = null;
+	UIFunction.prototype.childContainer = null;
 	UIFunction.prototype.iconUI = null;
 	UIFunction.prototype.nameUI = null;
-	UIFunction.prototype.parameters = null;
 
 	UIFunction.prototype.init = function( onInit ) {
 		this.onInit = onInit;
@@ -39,15 +38,15 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 		this.nameUI.init( this.initData, onItemInit );
 		this.nameUI.container.css( 'margin-top', 11 );
 
-		this.parameterContainer = $( '<div></div>' )
+		this.childContainer = $( '<div></div>' )
 		.css( 'display', 'inline-block' )
 		.css( 'vertical-align', 'top' )
 		.css( 'width', '40%' )
 		.appendTo( this.container );
 
-		for( var i = 0; i < this.parameters.length; i++ ) {
-			this.parameters[i].init( this.onItemInit.bind( this ) );
-			this.parameters[i].changeContainer( this.parameterContainer );
+		for( var i = 0; i < this.children.length; i++ ) {
+			this.children[i].init( this.onItemInit.bind( this ) );
+			this.children[i].changeContainer( this.childContainer );
 		}
 
 		this.initialized = true;
@@ -58,8 +57,8 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 		this.iconUI.animateIn( delay );
 		this.nameUI.animateIn( delay );
 		
-		for( var i = 0, len = this.parameters.length; i < len; i++ ) {
-			this.parameters[ i ].animateIn( delay + 0.5 + i * 0.3 );
+		for( var i = 0, len = this.children.length; i < len; i++ ) {
+			this.children[ i ].animateIn( delay + 0.5 + i * 0.3 );
 		}
 
 		this.animatedIn = true;
@@ -67,23 +66,6 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 
 	UIFunction.prototype.animateOut = function( delay ) {
 
-	};
-
-	UIFunction.prototype.addItem = function( ui ) {
-		this.addItemToInit();
-		this.parameters.push( ui );
-
-		if( this.initialized ) {
-			if( !ui.initialized ) {
-				ui.init( this.onItemInit.bind( this ) );
-			}
-
-			ui.changeContainer( this.parameterContainer );
-		}
-
-		if( this.animatedIn ) {
-			ui.animateIn();
-		}
 	};
 
 	UIFunction.prototype.onNameChange = function( nName, oValue ) {
