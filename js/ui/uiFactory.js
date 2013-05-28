@@ -14,7 +14,6 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 		var classToActOn = null;
 		var functionToActOn = null;
 		var numCommandsRun = 0;
-		var newTopLevelItems = [];
 
 		for( var i = 0; i < command.length; i++ ) {
 			//We want to stop the execution of commands if an error was returned
@@ -33,7 +32,9 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 
 						this.factory.addClass( curItem );
 
-						newTopLevelItems.push( nClass );
+						nClass.init( function() {
+							nClass.animateIn();
+						});
 					}
 
 					classToActOn = curItem;
@@ -47,14 +48,16 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 					curItem = this.factory.getFunction( command[ i ].parameter, classToActOn );
 
 					if( curItem === null ) {
-						curItem = new UIFunction( this.factory.container, command[ i ].parameter );	
+						var nFunction = curItem = new UIFunction( this.factory.container, command[ i ].parameter );	
 						
 						this.factory.addFunction( curItem, classToActOn );
 
 						if( classToActOn !== null ) {
 							classToActOn.addItem( curItem );
 						} else {
-							newTopLevelItems.push( curItem );
+							nFunction.init( function() {
+								nFunction.animateIn();
+							});
 						}
 					}
 
@@ -115,18 +118,6 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 					throw new Error( 'Command ' + command[ i ].func + 'not defined' );
 				break;
 			}
-		}
-
-
-
-		//now we need to loop through top level items and init them and animate them in
-		for( var i = 0, len = newTopLevelItems.length; i < len; i++ ) {
-			var curItem = newTopLevelItems[ i ];
-
-			curItem.init( function() {
-				curItem.animateIn();
-			});
-
 		}
 
 		return numCommandsRun;
@@ -312,12 +303,18 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 
 	UIFactory.prototype.addParameter = function( item, parentFunction ) {
 		if( parentFunction ) {
-			if( this.parametersForFunctions[ parentFunction.name ] === undefined ) {
-				this.parametersForFunctions[ parentFunction.name ] = [];
+			var key = parentFunction.name;
+
+			if( parentFunction.parent ) {
+				key = parentFunction.parent.name + '_' + key;
 			}
 
-			if( this._getItemInArr( item, this.parametersForFunctions[ parentFunction.name ] ) === null ) {
-				this.parametersForFunctions[ parentFunction.name ].push( item );
+			if( this.parametersForFunctions[ key ] === undefined ) {
+				this.parametersForFunctions[ key ] = [];
+			}
+
+			if( this._getItemInArr( item, this.parametersForFunctions[ key ] ) === null ) {
+				this.parametersForFunctions[ key ].push( item );
 			}
 		}
 	};
@@ -325,9 +322,16 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 	UIFactory.prototype.getParameter = function( item, parentFunction ) {
 		var rVal = null;
 
+		var key = parentFunction.name;
+
+		if( parentFunction.parent ) {
+			key = parentFunction.parent.name + '_' + key;
+		}
+
 		if( parentFunction ) {
+
 			if( this.parametersForFunctions[ parentFunction.name ] ) {
-				rVal = this._getItemInArr( item, this.parametersForFunctions[ parentFunction.name ] );
+				rVal = this._getItemInArr( item, this.parametersForFunctions[ key ] );
 			}
 		}
 
