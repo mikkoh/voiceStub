@@ -77,7 +77,7 @@ requirejs( [ 'parser/parser' ], function( Parser ) {
 				' Received:' + parsedCommand[ i ].func );
 
 				equal( parsedCommand[ i ].parameter, expectedparameter[ i ], 
-				'parameter received were not corrected. Expected: ' + expectedCommands[ i ] +
+				'parameter received were not corrected. Expected: ' + expectedparameter[ i ] +
 				' Received:' + parsedCommand[ i ].parameter );
 
 				if( actOn ) {
@@ -135,6 +135,11 @@ requirejs( [ 'parser/parser' ], function( Parser ) {
 									  [ 'createFunction' ],
 									  [ 'bar' ] ));
 
+	test( 'add a function to cat called testing', createTest( 'add a function to cat called testing', 
+									  [ 'createFunction' ],
+									  [ 'testing' ],
+									  [ 'cat'] ));
+
 
 
 
@@ -188,6 +193,8 @@ requirejs( [ 'parser/parser' ], function( Parser ) {
 	test( 'add a function called go to and stop', createTest( 'add a function called go to and stop', 
 									  [ 'createFunction' ],
 									  [ 'go to and stop' ]));
+
+
 
 
 	// I took this out because for now it's near impossible to parse this kind of list
