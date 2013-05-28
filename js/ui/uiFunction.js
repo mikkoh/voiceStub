@@ -46,7 +46,7 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiFunctionIcon' ], functio
 
 		for( var i = 0; i < this.children.length; i++ ) {
 			this.children[i].init( this.onItemInit.bind( this ) );
-			this.children[i].changeContainer( this.childContainer );
+			this.children[i].setParent( this );
 		}
 
 		this.initialized = true;

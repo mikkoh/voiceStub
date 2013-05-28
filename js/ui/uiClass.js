@@ -41,7 +41,7 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiClassIcon' ], function( 
 
 		for( var i = 0; i < this.children.length; i++ ) {
 			this.children[i].init( this.onItemInit.bind( this ) );
-			this.children[i].changeContainer( this.childContainer );
+			this.children[i].setParent( this );
 		}
 
 		this.initialized = true;
@@ -62,7 +62,7 @@ define( [ 'lib/jquery', 'ui/uiBase', 'ui/uiName', 'ui/uiClassIcon' ], function( 
 	UIClass.prototype.animateOut = function( delay ) {
 		
 	};
-	
+
 	UIClass.prototype.onNameChange = function( nName, oValue ) {
 		console.log( 'value changed', nName, oValue );
 	};

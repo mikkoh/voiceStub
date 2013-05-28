@@ -16,12 +16,6 @@ define( function() {
 	UIBase.prototype.children = null;
 	UIBase.prototype.onInit = null;
 
-	UIBase.prototype.setParent = function( parent ) {
-		this.parentContainer = parent.childContainer;
-		
-		this.container.appendTo( this.parentContainer );
-	};
-
 	UIBase.prototype.add = function() {
 		this.isOnStage = true;
 		this.container.appendTo( this.parentContainer );	
@@ -101,6 +95,12 @@ define( function() {
 		if( this.animatedIn ) {
 			ui.animateIn();
 		}
+	};
+
+	UIBase.prototype.setParent = function( parent ) {
+		this.parentContainer = parent.childContainer;
+		
+		this.container.appendTo( this.parentContainer );
 	};
 
 	UIBase.prototype.addItemToInit = function() {
