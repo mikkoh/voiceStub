@@ -69,15 +69,17 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 						functionToActOn = this.factory.getFunction( command[ i ].actOn );
 					}
 
-					curItem = this.factory.getParameter( command[ i ].parameter, functionToActOn );
+					if( functionToActOn ) {
+						curItem = this.factory.getParameter( command[ i ].parameter, functionToActOn );
 
-					if( functionToActOn !== null ) {
-						if( curItem === null ) {
-							curItem = new UIParameter( this.factory.container, command[ i ].parameter );
+						if( functionToActOn !== null ) {
+							if( curItem === null ) {
+								curItem = new UIParameter( this.factory.container, command[ i ].parameter );
 
-							this.factory.addParameter( curItem, functionToActOn );
+								this.factory.addParameter( curItem, functionToActOn );
 
-							functionToActOn.addItem( curItem );
+								functionToActOn.addItem( curItem );
+							}
 						}
 					}
 				break;
