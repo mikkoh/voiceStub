@@ -258,35 +258,50 @@ define( function() {
 		for( var i = 0, len = this.prepositions.length; i < len; i++ ) { 
 			var cPreposition = this.prepositions[ i ];
 			var cPrepsositionIdx = this.indexOfWholeWord( statement, cPreposition );
-			var spaceIdx = statement.length;
+			var startSpaceIdx = cPrepsositionIdx + cPreposition.length + 1;
 
 			//if we found a preposition
-			//checking for the space will make sure the preposition doesnt happen within a word
-			if( cPrepsositionIdx > -1 && statement.charAt( cPrepsositionIdx - 1 ) == ' ' ) {
-				//we'll start looking from the end of the statement until we hit the preposition
-				
+			if( cPrepsositionIdx > -1 ) {
+				//we'll start looking from the preposition index forward and see if we find nouns
+				var endSpaceIndex = statement.indexOf( ' ', startSpaceIdx + 1 );
 
-				while( spaceIdx > cPrepsositionIdx ) {
-					var wordStartIdx = statement.lastIndexOf( ' ', spaceIdx ) + 1;
-					
-					var possibleLearnedNoun = statement.substring( wordStartIdx, statement.length );
+				if( endSpaceIndex == -1 ) {
+					endSpaceIndex = statement.length;
+				}
 
-					if( this.isLearnedNoun( possibleLearnedNoun ) ) {
-						parsedData.actOn = possibleLearnedNoun;
+				var currentLearnedNoun = null;
+
+				while( endSpaceIndex > 0 ) {
+					var cPossibleNoun = statement.substring( startSpaceIdx, endSpaceIndex );
+
+					if( ! this.isLearnedNoun( cPossibleNoun ) ) {
+						break;
+					} else {
+						parsedData.actOn = cPossibleNoun;
 					}
 
-					spaceIdx = wordStartIdx - 2;
+
+					if( endSpaceIndex != statement.length )
+					{
+						var endSpaceIndex = statement.indexOf( ' ', endSpaceIndex + 1 );
+
+						if( endSpaceIndex == -1 ) {
+							endSpaceIndex = statement.length;
+						}
+					} else {
+						break;
+					}
 				}
 
-				if( parsedData.actOn ) {
-					statement = statement.substring( 0, cPrepsositionIdx );
-
-					break;
-				}
+				//break out of proposition loop
+				//since we found a propostion
+				break;
 			}
 		}
 
-		
+		if( parsedData.actOn !== null )  {
+			statement = this.removeAtIdx( statement, startSpaceIdx, parsedData.actOn );
+		}
 
 
 		return statement;
