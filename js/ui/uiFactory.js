@@ -26,18 +26,21 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 			switch( command[ i ].func ) {
 				case 'createClass':
 					curItem = this.factory.getClass( command[ i ].parameter );
+					var functionWithSameName = this.factory.getFunction( command[ i ].parameter );
 
-					if( curItem === null ) {
-						var nClass = curItem = new UIClass( this.factory.container, command[ i ].parameter );
+					if( !functionWithSameName ) {
+						if( curItem === null ) {
+							var nClass = curItem = new UIClass( this.factory.container, command[ i ].parameter );
 
-						this.factory.addClass( curItem );
+							this.factory.addClass( curItem );
 
-						nClass.init( function() {
-							nClass.animateIn();
-						});
+							nClass.init( function() {
+								nClass.animateIn();
+							});
+						}
+
+						classToActOn = curItem;
 					}
-
-					classToActOn = curItem;
 				break;
 
 				case 'createFunction':
@@ -47,17 +50,23 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 
 					curItem = this.factory.getFunction( command[ i ].parameter, classToActOn );
 
-					if( curItem === null ) {
-						var nFunction = curItem = new UIFunction( this.factory.container, command[ i ].parameter );	
-						
-						this.factory.addFunction( curItem, classToActOn );
+					if( !classToActOn ) {
+						var classWithSameName = this.factory.getClass( command[ i ].parameter );
+					}
 
-						if( classToActOn !== null ) {
-							classToActOn.addItem( curItem );
-						} else {
-							nFunction.init( function() {
-								nFunction.animateIn();
-							});
+					if( !classWithSameName ) {
+						if( curItem === null ) {
+							var nFunction = curItem = new UIFunction( this.factory.container, command[ i ].parameter );	
+							
+							this.factory.addFunction( curItem, classToActOn );
+
+							if( classToActOn !== null ) {
+								classToActOn.addItem( curItem );
+							} else {
+								nFunction.init( function() {
+									nFunction.animateIn();
+								});
+							}
 						}
 					}
 
