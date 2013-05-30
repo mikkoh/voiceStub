@@ -16,118 +16,125 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 		var numCommandsRun = 0;
 
 		for( var i = 0; i < command.length; i++ ) {
-			//We want to stop the execution of commands if an error was returned
-			if( command[ i ].error ) {
-				break;
-			}
+			if( command[ i ].parameter ) {
+				switch( command[ i ].func ) {
+					case 'createClass':
+						curItem = this.factory.getClass( command[ i ].parameter );
+						var functionWithSameName = this.factory.getFunction( command[ i ].parameter );
 
-			numCommandsRun++;
+						if( !functionWithSameName ) {
+							if( curItem === null ) {
+								var nClass = curItem = new UIClass( this.factory.container, command[ i ].parameter );
 
-			switch( command[ i ].func ) {
-				case 'createClass':
-					curItem = this.factory.getClass( command[ i ].parameter );
-					var functionWithSameName = this.factory.getFunction( command[ i ].parameter );
+								this.factory.addClass( curItem );
 
-					if( !functionWithSameName ) {
-						if( curItem === null ) {
-							var nClass = curItem = new UIClass( this.factory.container, command[ i ].parameter );
-
-							this.factory.addClass( curItem );
-
-							nClass.init( function() {
-								nClass.animateIn();
-							});
-						}
-
-						classToActOn = curItem;
-					}
-				break;
-
-				case 'createFunction':
-					if( command[ i ].actOn ) {
-						classToActOn = this.factory.getClass( command[ i ].actOn );
-					}
-
-					curItem = this.factory.getFunction( command[ i ].parameter, classToActOn );
-
-					if( !classToActOn ) {
-						var classWithSameName = this.factory.getClass( command[ i ].parameter );
-					}
-
-					if( !classWithSameName ) {
-						if( curItem === null ) {
-							var nFunction = curItem = new UIFunction( this.factory.container, command[ i ].parameter );	
-							
-							this.factory.addFunction( curItem, classToActOn );
-
-							if( classToActOn !== null ) {
-								classToActOn.addItem( curItem );
-							} else {
-								nFunction.init( function() {
-									nFunction.animateIn();
+								nClass.init( function() {
+									nClass.animateIn();
 								});
 							}
+
+							classToActOn = curItem;
+
+							numCommandsRun++;
 						}
-					}
+					break;
 
-					functionToActOn = curItem;
-				break;
+					case 'createFunction':
+						if( command[ i ].actOn ) {
+							classToActOn = this.factory.getClass( command[ i ].actOn );
+						}
 
-				case 'addParameter':
-					if( command[ i ].actOn ) {
-						functionToActOn = this.factory.getFunction( command[ i ].actOn );
-					}
+						curItem = this.factory.getFunction( command[ i ].parameter, classToActOn );
 
-					if( functionToActOn ) {
-						curItem = this.factory.getParameter( command[ i ].parameter, functionToActOn );
+						if( !classToActOn ) {
+							var classWithSameName = this.factory.getClass( command[ i ].parameter );
+						}
 
-						if( functionToActOn !== null ) {
+						if( !classWithSameName ) {
 							if( curItem === null ) {
-								curItem = new UIParameter( this.factory.container, command[ i ].parameter );
+								var nFunction = curItem = new UIFunction( this.factory.container, command[ i ].parameter );	
+								
+								this.factory.addFunction( curItem, classToActOn );
 
-								this.factory.addParameter( curItem, functionToActOn );
+								if( classToActOn !== null ) {
+									classToActOn.addItem( curItem );
+								} else {
+									nFunction.init( function() {
+										nFunction.animateIn();
+									});
+								}
+							}
 
-								functionToActOn.addItem( curItem );
+							numCommandsRun++;
+						}
+
+						functionToActOn = curItem;
+					break;
+
+					case 'addParameter':
+						if( command[ i ].actOn ) {
+							functionToActOn = this.factory.getFunction( command[ i ].actOn );
+						}
+
+						if( functionToActOn ) {
+							curItem = this.factory.getParameter( command[ i ].parameter, functionToActOn );
+
+							if( functionToActOn !== null ) {
+								if( curItem === null ) {
+									curItem = new UIParameter( this.factory.container, command[ i ].parameter );
+
+									this.factory.addParameter( curItem, functionToActOn );
+
+									functionToActOn.addItem( curItem );
+								}
+
+								numCommandsRun++;
 							}
 						}
-					}
-				break;
+					break;
 
-				case 'deleteClass':
-					curItem = this.factory.getClass( command[ i ].parameter );
+					case 'deleteClass':
+						curItem = this.factory.getClass( command[ i ].parameter );
 
-					if( curItem !== null ) {
-						curItem.remove();
-					}
-				break;
+						if( curItem !== null ) {
+							curItem.remove();
+						}
 
-				case 'deleteFunction':
-					if( command[ i ].actOn ) {
-						classToActOn = this.factory.getClass( command[ i ].actOn );
-					}
+						numCommandsRun++;
+					break;
 
-					curItem = this.factory.getFunction( command[ i ].parameter, classToActOn );
+					case 'deleteFunction':
+						if( command[ i ].actOn ) {
+							classToActOn = this.factory.getClass( command[ i ].actOn );
+						}
 
-					if( curItem !== null ) {
-						curItem.remove();
-					}
-				break;
+						curItem = this.factory.getFunction( command[ i ].parameter, classToActOn );
 
-				case 'deleteParameter':
-					if( command[ i ].actOn ) {
-						functionToActOn = this.factory.getFunction( command[ i ].actOn );
-					}
+						if( curItem !== null ) {
+							curItem.remove();
+						}
 
-					curItem = this.factory.getParameter( command[ i ].parameter, functionToActOn );
+						numCommandsRun++;
+					break;
 
-					if( curItem !== null ) {	
-						curItem.remove();
-					}
-				break;
+					case 'deleteParameter':
+						if( command[ i ].actOn ) {
+							functionToActOn = this.factory.getFunction( command[ i ].actOn );
+						}
 
-				default:
-					throw new Error( 'Command ' + command[ i ].func + 'not defined' );
-				break;
+						curItem = this.factory.getParameter( command[ i ].parameter, functionToActOn );
+
+						if( curItem !== null ) {	
+							curItem.remove();
+						}
+
+						numCommandsRun++;
+					break;
+
+					default:
+						throw new Error( 'Command ' + command[ i ].func + 'not defined' );
+					break;
+				}
 			}
 		}
 
@@ -143,11 +150,10 @@ define( [ 'ui/uiClass', 'ui/uiFunction', 'ui/uiParameter' ], function( UIClass, 
 
 		for( var i = 0; i < command.length; i++ ) {
 			//We want to stop the execution of commands if an error was returned
-			if( command[ i ].error ) {
-				break;
+		
+			if( command[ i ].func ) {
+				numCommandsRun++;
 			}
-
-			numCommandsRun++;
 
 			switch( command[ i ].func ) {
 				case 'createClass':

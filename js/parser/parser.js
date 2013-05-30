@@ -350,11 +350,9 @@ define( function() {
 				if( learningIdx != -1 ) {
 					var nNounIdx = learningIdx + cLearning.length; //+1 for space
 
-					if( nNounIdx != statement.length ) {
+					if( nNounIdx + 1 != statement.length ) {
 						parsedData.noun = statement.substr( nNounIdx + 1, statement.length ).trim();
 						statement = this.removeAtIdx( statement, learningIdx, cLearning + ' ' + parsedData.noun );
-
-
 
 						//we will learn this noun for future reference
 						//and if there is a keyNoun for this statement we'll also 

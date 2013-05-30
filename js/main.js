@@ -268,18 +268,18 @@ function( $, Parser, UIFactory, UICreationBTN, colours, UIRecordPreview, UIRecor
 			};
 
 
+			
+			// finalRecording = 'create a class called mikko with a function called testing this thing with a parameter called a lot';
+			// endParseTextField();
 
-			finalRecording = 'create a class called mikko with a function called testing this thing with a parameter called a lot';
-			endParseTextField();
+			// finalRecording = 'create a class called matti with a function called testing this thing with a parameter called a lot';
+			// endParseTextField();
 
-			finalRecording = 'create a class called matti with a function called testing this thing with a parameter called a lot';
-			endParseTextField();
+			// finalRecording = 'create a function called testing with a parameter called open';
+			// endParseTextField();
 
-			finalRecording = 'create a function called testing with a parameter called open';
-			endParseTextField();
-
-			var jsExporter = new ExporterJavascript();
-			console.log( jsExporter.getString( uiFactory.getObjectRepresentation() ) );
+			// var jsExporter = new ExporterJavascript();
+			// console.log( jsExporter.getString( uiFactory.getObjectRepresentation() ) );
 		}
 	});
 });
