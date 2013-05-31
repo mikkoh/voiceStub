@@ -254,14 +254,17 @@ define( function() {
 
 	Parser.prototype.parseOutPrepositionAndNoun = function( statement, parsedData ) {
 		parsedData.actOn = null;
+		foundPreposition = null;
+		foundPrepositionIdx = -1;
 
 		for( var i = 0, len = this.prepositions.length; i < len; i++ ) { 
 			var cPreposition = this.prepositions[ i ];
 			var cPrepsositionIdx = this.indexOfWholeWord( statement, cPreposition );
-			var startSpaceIdx = cPrepsositionIdx + cPreposition.length + 1;
+			var isNotLearnedNoun = false;
 
-			//if we found a preposition
-			if( cPrepsositionIdx > -1 ) {
+			while( cPrepsositionIdx > -1 ) {
+				var startSpaceIdx = cPrepsositionIdx + cPreposition.length + 1;
+
 				//we'll start looking from the preposition index forward and see if we find nouns
 				var endSpaceIndex = statement.indexOf( ' ', startSpaceIdx + 1 );
 
@@ -269,14 +272,14 @@ define( function() {
 					endSpaceIndex = statement.length;
 				}
 
-				var currentLearnedNoun = null;
-
 				while( endSpaceIndex > 0 ) {
 					var cPossibleNoun = statement.substring( startSpaceIdx, endSpaceIndex );
 
 					if( ! this.isLearnedNoun( cPossibleNoun ) ) {
 						break;
 					} else {
+						foundPreposition = cPreposition;
+						foundPrepositionIdx = cPrepsositionIdx;
 						parsedData.actOn = cPossibleNoun;
 					}
 
@@ -293,14 +296,12 @@ define( function() {
 					}
 				}
 
-				//break out of proposition loop
-				//since we found a propostion
-				break;
+				cPrepsositionIdx = this.indexOfWholeWord( statement, cPreposition, cPrepsositionIdx + 1 );
 			}
 		}
 
 		if( parsedData.actOn !== null )  {
-			statement = this.removeAtIdx( statement, startSpaceIdx, parsedData.actOn );
+			statement = this.removeAtIdx( statement, foundPrepositionIdx, foundPreposition + ' ' + parsedData.actOn );
 		}
 
 
@@ -368,8 +369,10 @@ define( function() {
 		return statement;	
 	};
 
-	Parser.prototype.indexOfWholeWord = function( statement, word ) {
-		var startIdx = statement.indexOf( word );
+	Parser.prototype.indexOfWholeWord = function( statement, word, lookUpStartIDX ) {
+		lookUpStartIDX = lookUpStartIDX === undefined ? 0 : lookUpStartIDX;
+
+		var startIdx = statement.indexOf( word, lookUpStartIDX );
 		var endIdx = startIdx + word.length;
 
 		if( startIdx != -1 ) {

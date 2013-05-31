@@ -194,6 +194,11 @@ requirejs( [ 'parser/parser' ], function( Parser ) {
 									  [ 'createFunction' ],
 									  [ 'go to and stop' ]));
 
+	test( 'add a function called go to to cat', createTest( 'add a function called go to to cat', 
+															[ 'createFunction' ],
+															[ 'go to' ], 
+															[ 'cat' ]));
+
 
 
 
